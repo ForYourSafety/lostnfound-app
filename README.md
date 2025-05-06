@@ -12,6 +12,18 @@ Install this application by cloning the *relevant branch* and use bundler to ins
 bundle install
 ```
 
+## Configuration
+
+Copy the `config/secrets.yml.example` file to `config/secrets.yml` and fill in the required values.
+
+To obtain a SESSION_SECRET, run the following command:
+
+```shell
+rake generate:session_secret
+```
+
+This will generate a random session secret that you can use in your `secrets.yml` file.
+
 ## Test
 
 This web app does not contain any tests yet :(
