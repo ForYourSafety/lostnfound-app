@@ -151,6 +151,7 @@ DEPENDENCIES
   minitest-rg
   pry
   puma (~> 6.0)
+  rack
   rack-session (~> 2.0)
   rack-ssl-enforcer
   rack-test
