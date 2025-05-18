@@ -136,6 +136,7 @@ PLATFORMS
   x86-linux-gnu
   x86-linux-musl
   x86_64-darwin
+  x86_64-linux
   x86_64-linux-gnu
   x86_64-linux-musl
 
@@ -163,7 +164,7 @@ DEPENDENCIES
   webmock
 
 RUBY VERSION
-   ruby 3.4.3p32
+   ruby 3.4.3
 
 BUNDLED WITH
    2.6.7
