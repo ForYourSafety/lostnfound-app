@@ -11,9 +11,12 @@ module LostNFound
       @config = config
     end
 
-    def call(username:, password:)
-      message = { username:,
-                  password: }
+    def call(username:, password:, email:)
+      message = {
+        username:,
+        password:,
+        email:
+      }
 
       response = HTTP.post(
         "#{@config.API_URL}/accounts/",
