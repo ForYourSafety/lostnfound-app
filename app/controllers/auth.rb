@@ -47,24 +47,54 @@ module LostNFound
       end
 
       @register_route = '/auth/register'
-      routing.is 'register' do
-        routing.get do
-          view :register
+      routing.on 'register' do # rubocop:disable Metrics/BlockLength
+        routing.is do
+          # GET /auth/register
+          routing.get do
+            view :register
+          end
+
+          # POST /auth/register
+          routing.post do
+            account_data = routing.params.transform_keys(&:to_sym)
+
+            VerifyRegistration.new(App.config).call(account_data)
+
+            flash[:notice] = 'Please check your email for a verification link'
+            routing.redirect '/'
+          rescue VerifyRegistration::ApiServerError => e
+            App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
+            flash[:error] = 'Our servers are not responding -- please try later'
+            routing.redirect @register_route
+          rescue StandardError => e
+            App.logger.error "Could not process registration: #{e.inspect}\n#{e.backtrace.join("\n")}"
+            flash[:error] = 'Registration process failed -- please try later'
+            routing.redirect @register_route
+          end
         end
 
-        routing.post do
-          account_data = routing.params.transform_keys(&:to_sym)
+        # GET /auth/register/<token>
+        routing.get(String) do |registration_token|
+          new_account = SecureMessage.new(registration_token).decrypt
+          exp = new_account.delete('exp')
 
-          VerifyRegistration.new(App.config).call(account_data)
+          if Time.now.to_i > exp
+            # Token has expired
+            raise(VerifyRegistration::VerificationError,
+                  'Registration token has expired. Please submit a new request again.')
+          end
 
-          flash[:notice] = 'Please check your email for a verification link'
-          routing.redirect '/'
-        rescue VerifyRegistration::ApiServerError => e
-          App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
-          flash[:error] = 'Our servers are not responding -- please try later'
+          flash.now[:notice] = 'Email Verified! Please choose a new password'
+
+          view :register_confirm,
+               locals: { new_account:,
+                         registration_token: }
+        rescue VerifyRegistration::VerificationError => e
+          App.logger.warn "Email token verification error: #{e.inspect}"
+          flash[:error] = e.message
           routing.redirect @register_route
         rescue StandardError => e
-          App.logger.error "Could not process registration: #{e.inspect}\n#{e.backtrace.join("\n")}"
+          App.logger.error "Could not process registration: #{e.inspect}"
           flash[:error] = 'Registration process failed -- please try later'
           routing.redirect @register_route
         end
