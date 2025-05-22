@@ -58,7 +58,8 @@ namespace :generate do
   end
 
   desc 'Create cookie secret'
-  task session_secret: [:load_lib] do
+  task session_secret: [] do
+    require './app/lib/secure_session'
     puts "New SESSION_SECRET (base64): #{SecureSession.generate_secret}"
   end
 end
