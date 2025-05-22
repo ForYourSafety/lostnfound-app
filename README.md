@@ -16,10 +16,10 @@ bundle install
 
 Copy the `config/secrets.yml.example` file to `config/secrets.yml` and fill in the required values.
 
-To obtain a SESSION_SECRET, run the following command:
+To obtain a MSG_KEY, run the following command:
 
 ```shell
-rake generate:session_secret
+rake generate:msg_key
 ```
 
 This will generate a random session secret that you can use in your `secrets.yml` file.

@@ -23,14 +23,9 @@ module LostNFound
     Figaro.load
     def self.config = Figaro.env
 
-    # Session configuration
+    # Secure session configuration
     ONE_MONTH = 30 * 24 * 60 * 60
-    @redis_url = ENV.delete('REDISCLOUD_URL')
     SecureMessage.setup(ENV.delete('MSG_KEY'))
-    SecureSession.setup(@redis_url)
-    # use Rack::Session::Cookie,
-    #     expire_after: ONE_MONTH,
-    #     secret: config.SESSION_SECRET
 
     # HTTP Request logging
     configure :development, :production do
@@ -45,6 +40,9 @@ module LostNFound
     configure :development, :test do
       # Suppresses log info/warning outputs in dev/test environments
       logger.level = Logger::ERROR
+
+      # NOTE: env var REDIS_URL only used to wipe the session store (ok to be nil)
+      SecureSession.setup(ENV.fetch('REDIS_URL', nil)) # REDIS_URL used again below
 
       # use Rack::Session::Cookie,
       #     expire_after: ONE_MONTH, secret: config.SESSION_SECRET
@@ -66,6 +64,9 @@ module LostNFound
     end
     configure :production do
       use Rack::SslEnforcer, hsts: true
+
+      @redis_url = ENV.delete('REDISCLOUD_URL')
+      SecureSession.setup(@redis_url) # Only used for wiping redis sessions with rake session:wipe
 
       use Rack::Session::Redis,
           expire_after: ONE_MONTH,
