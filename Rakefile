@@ -52,7 +52,8 @@ end
 
 namespace :generate do
   desc 'Create rbnacl key'
-  task msg_key: [:load_lib] do
+  task msg_key: [] do
+    require './app/lib/secure_message'
     puts "New MSG_KEY (base64): #{SecureMessage.generate_key}"
   end
 
