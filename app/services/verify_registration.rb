@@ -18,11 +18,11 @@ module LostNFound
       @config = config
     end
 
-    def self.expires(expiration)
+    def expires(expiration)
       (Time.now + expiration).to_i
     end
 
-    def call(registration_data)
+    def call(registration_data) # rubocop:disable Metrics/AbcSize
       registration_data['exp'] = Time.now.to_i + expires(ONE_HOUR)
 
       registration_token = SecureMessage.encrypt(registration_data)
@@ -31,9 +31,11 @@ module LostNFound
 
       response = HTTP.post("#{@config.API_URL}/auth/register",
                            json: registration_data)
-      raise(VerificationError) unless response.code == 202
+      body = JSON.parse(response.to_s)
 
-      JSON.parse(response.to_s)
+      raise(VerificationError, body['message']) unless response.code == 202
+
+      body
     rescue HTTP::ConnectionError
       raise(ApiServerError)
     end

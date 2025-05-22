@@ -66,6 +66,10 @@ module LostNFound
             App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
             flash[:error] = 'Our servers are not responding -- please try later'
             routing.redirect @register_route
+          rescue VerifyRegistration::VerificationError => e
+            App.logger.warn "Email token verification error: #{e.inspect}"
+            flash[:error] = "Invalid registration: #{e.message}"
+            routing.redirect @register_route
           rescue StandardError => e
             App.logger.error "Could not process registration: #{e.inspect}\n#{e.backtrace.join("\n")}"
             flash[:error] = 'Registration process failed -- please try later'
