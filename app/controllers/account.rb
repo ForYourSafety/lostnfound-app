@@ -6,8 +6,8 @@ require_relative './app'
 module LostNFound
   # Web controller for LostNFound API
   class App < Roda
-    route('account') do |routing|
-      routing.on do
+    route('account') do |routing| # rubocop:disable Metrics/BlockLength
+      routing.on do # rubocop:disable Metrics/BlockLength
         # GET /account/
         routing.get String do |username|
           if @current_account && @current_account['username'] == username
@@ -23,7 +23,8 @@ module LostNFound
             routing.params['password'].empty? ||
             routing.params['password'] != routing.params['password_confirm']
 
-          new_account = SecureMessage.new(registration_token).decrypt
+          new_account = VerifyRegistrationToken.new(App.config).call(registration_token)
+
           CreateAccount.new(App.config).call(
             email: new_account['email'],
             username: new_account['username'],

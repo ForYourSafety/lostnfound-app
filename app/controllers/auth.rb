@@ -79,21 +79,14 @@ module LostNFound
 
         # GET /auth/register/<token>
         routing.get(String) do |registration_token|
-          new_account = SecureMessage.new(registration_token).decrypt
-          exp = new_account.delete('exp')
-
-          if Time.now.to_i > exp
-            # Token has expired
-            raise(VerifyRegistration::VerificationError,
-                  'Registration token has expired. Please submit a new request again.')
-          end
+          new_account = VerifyRegistrationToken.new(App.config).call(registration_token)
 
           flash.now[:notice] = 'Email Verified! Please choose a new password'
 
           view :register_confirm,
                locals: { new_account:,
                          registration_token: }
-        rescue VerifyRegistration::VerificationError => e
+        rescue VerifyRegistrationToken::VerificationError => e
           App.logger.warn "Email token verification error: #{e.inspect}"
           flash[:error] = e.message
           routing.redirect @register_route
