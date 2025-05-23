@@ -6,8 +6,8 @@ ruby File.read('.ruby-version').strip
 # Web
 gem 'logger', '~> 1.0'
 gem 'puma', '~>6.0'
-gem 'rack'
-gem 'rack-session', '~>2.0'
+gem 'rack', '~> 3.1.15'
+gem 'rack-session', '~>2.1.1'
 gem 'redis-rack'
 gem 'redis-store'
 gem 'roda', '~>3.54'
