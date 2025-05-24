@@ -22,8 +22,8 @@ module LostNFound
       (Time.now + expiration).to_i
     end
 
-    def call(registration_data) # rubocop:disable Metrics/AbcSize
-      registration_data['exp'] = Time.now.to_i + expires(ONE_HOUR)
+    def call(registration_data) # rubocop:disable Metrics/MethodLength
+      registration_data['exp'] = expires(ONE_HOUR)
 
       registration_token = SecureMessage.encrypt(registration_data)
       registration_data['verification_url'] =
