@@ -1,0 +1,4 @@
+en:
+  errors:
+    name: 'Contact name must be filled'
+    contact_type: 'Contact type must be selected'
