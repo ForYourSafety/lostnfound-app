@@ -16,12 +16,22 @@ module LostNFound
 
         # POST /auth/login
         routing.post do
-          account = AuthenticateAccount.new(App.config).call(
-            username: routing.params['username'],
-            password: routing.params['password']
+          credentials = Form::LoginCredentials.new.call(routing.params)
+
+          if credentials.failure?
+            flash[:error] = 'Please enter both username and password'
+            routing.redirect @login_route
+          end
+
+          authenticated = AuthenticateAccount.new(App.config)
+                                             .call(**credentials.values)
+
+          current_account = Account.new(
+            authenticated[:account],
+            authenticated[:auth_token]
           )
 
-          SecureSession.new(session).set(:current_account, account)
+          CurrentSession.new(session).current_account = current_account
           flash[:notice] = "Welcome back #{account['username']}!"
           routing.redirect '/'
         rescue AuthenticateAccount::UnauthorizedError
@@ -40,7 +50,7 @@ module LostNFound
       routing.on 'logout' do
         # GET /auth/logout
         routing.get do
-          SecureSession.new(session).delete(:current_account)
+          CurrentSession.new(session).delete
           flash[:notice] = "You've been logged out"
           routing.redirect @login_route
         end
@@ -56,7 +66,12 @@ module LostNFound
 
           # POST /auth/register
           routing.post do
-            account_data = routing.params.transform_keys(&:to_sym)
+            registration = Form::Registration.new.call(routing.params)
+
+            if registration.failure?
+              flash[:error] = Form.validation_errors(registration)
+              routing.redirect @register_route
+            end
 
             VerifyRegistration.new(App.config).call(account_data)
 
