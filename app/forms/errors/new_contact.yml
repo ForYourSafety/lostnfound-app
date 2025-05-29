@@ -1,4 +1,6 @@
 en:
   errors:
-    name: 'Contact name must be filled'
-    contact_type: 'Contact type must be selected'
+    contact_type: 'select a contact type'
+    contact_type_valid?: 'invalid contact type'
+    value: 'provide contact information'
+    value_valid?: 'contact information format is invalid'
