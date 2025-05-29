@@ -1,7 +1,8 @@
 en:
   errors:
-    name: 'Item name must be filled'
-    type: 'Item type must be selected'
-    description: 'Item description must be filled'
-    location: 'Item location must be filled'
-    contact: 'Item contact must be filled'
+    type: 'please select whether the item is lost or found'
+    type_valid?: 'invalid item type (must be lost or found)'
+    name: 'please provide a name for the item'
+    description: 'optional: add a brief description'
+    location: 'optional: specify where the item was lost/found'
+    person_info: 'optional: add any identifying details (e.g., tag, initials)'
