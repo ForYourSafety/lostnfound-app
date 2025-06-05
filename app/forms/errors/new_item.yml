@@ -1,0 +1,8 @@
+en:
+  errors:
+    type: 'please select whether the item is lost or found'
+    type_valid?: 'invalid item type (must be lost or found)'
+    name: 'please provide a name for the item'
+    description: 'optional: add a brief description'
+    location: 'optional: specify where the item was lost/found'
+    person_info: 'optional: add any identifying details (e.g., tag, initials)'

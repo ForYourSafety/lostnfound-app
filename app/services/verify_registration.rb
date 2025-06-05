@@ -22,20 +22,17 @@ module LostNFound
       (Time.now + expiration).to_i
     end
 
-    def call(registration_data) # rubocop:disable Metrics/MethodLength
-      registration_data['exp'] = expires(ONE_HOUR)
-
-      registration_token = SecureMessage.encrypt(registration_data)
-      registration_data['verification_url'] =
+    def call(registration_data)
+      reg_details = registration_data.to_h
+      registration_token = SecureMessage.encrypt(reg_details)
+      reg_details['verification_url'] =
         "#{@config.APP_URL}/auth/register/#{registration_token}"
-
       response = HTTP.post("#{@config.API_URL}/auth/register",
-                           json: registration_data)
-      body = JSON.parse(response.to_s)
+                           json: reg_details)
 
-      raise(VerificationError, body['message']) unless response.code == 202
+      raise(VerificationError) unless response.code == 202
 
-      body
+      JSON.parse(response.to_s)
     rescue HTTP::ConnectionError
       raise(ApiServerError)
     end

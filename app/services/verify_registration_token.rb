@@ -14,8 +14,7 @@ module LostNFound
     def call(registration_token)
       new_account = SecureMessage.new(registration_token).decrypt
       exp = new_account.delete('exp')
-
-      return unless Time.now.to_i > exp
+      return new_account unless Time.now.to_i > exp
 
       # Token has expired
       raise(VerifyRegistration::VerificationError,

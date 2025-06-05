@@ -8,7 +8,7 @@ module LostNFound
   class App < Roda
     route('auth') do |routing| # rubocop:disable Metrics/BlockLength
       @login_route = '/auth/login'
-      routing.is 'login' do
+      routing.is 'login' do # rubocop:disable Metrics/BlockLength
         # GET /auth/login
         routing.get do
           view :login
@@ -16,17 +16,27 @@ module LostNFound
 
         # POST /auth/login
         routing.post do
-          account = AuthenticateAccount.new(App.config).call(
-            username: routing.params['username'],
-            password: routing.params['password']
+          credentials = Form::LoginCredentials.new.call(routing.params)
+
+          if credentials.failure?
+            flash[:error] = 'Please enter both username and password'
+            routing.redirect @login_route
+          end
+
+          authenticated = AuthenticateAccount.new(App.config)
+                                             .call(**credentials.values)
+
+          current_account = Account.new(
+            authenticated[:account],
+            authenticated[:auth_token]
           )
 
-          SecureSession.new(session).set(:current_account, account)
-          flash[:notice] = "Welcome back #{account['username']}!"
+          CurrentSession.new(session).current_account = current_account
+          flash[:notice] = "Welcome back #{current_account.username}!"
           routing.redirect '/'
         rescue AuthenticateAccount::UnauthorizedError
           flash.now[:error] = 'Username and password did not match our records'
-          response.status = 400
+          response.status = 401
           view :login
         rescue AuthenticateAccount::ApiServerError => e
           App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
@@ -40,14 +50,14 @@ module LostNFound
       routing.on 'logout' do
         # GET /auth/logout
         routing.get do
-          SecureSession.new(session).delete(:current_account)
+          CurrentSession.new(session).delete
           flash[:notice] = "You've been logged out"
           routing.redirect @login_route
         end
       end
 
       @register_route = '/auth/register'
-      routing.on 'register' do # rubocop:disable Metrics/BlockLength
+      routing.on 'register' do
         routing.is do
           # GET /auth/register
           routing.get do
@@ -56,9 +66,14 @@ module LostNFound
 
           # POST /auth/register
           routing.post do
-            account_data = routing.params.transform_keys(&:to_sym)
+            registration = Form::Registration.new.call(routing.params)
 
-            VerifyRegistration.new(App.config).call(account_data)
+            if registration.failure?
+              flash[:error] = Form.validation_errors(registration)
+              routing.redirect @register_route
+            end
+
+            VerifyRegistration.new(App.config).call(registration)
 
             flash[:notice] = 'Please check your email for a verification link'
             routing.redirect '/'
@@ -79,9 +94,8 @@ module LostNFound
 
         # GET /auth/register/<token>
         routing.get(String) do |registration_token|
-          new_account = VerifyRegistrationToken.new(App.config).call(registration_token)
-
           flash.now[:notice] = 'Email Verified! Please choose a new password'
+          new_account = VerifyRegistrationToken.new(App.config).call(registration_token)
 
           view :register_confirm,
                locals: { new_account:,

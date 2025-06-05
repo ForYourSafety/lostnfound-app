@@ -5,10 +5,10 @@ require 'webmock/minitest'
 
 describe 'Test Service Objects' do # rubocop:disable Metrics/BlockLength
   before do
-    @credentials = { username: 'mater.yi', password: 'abcdefg' }
-    @mal_credentials = { username: 'mater.yi', password: 'gfedcba' }
+    @credentials = { username: 'master.yi', password: 'abcdefg' }
+    @mal_credentials = { username: 'master.yi', password: 'gfedcba' }
     @api_account = { attributes:
-                       { username: 'mater.yi', email: 'yi@nthu.edu.tw' } }
+                       { username: 'master.yi', email: 'yi@nthu.edu.tw' } }
   end
 
   after do
@@ -17,9 +17,18 @@ describe 'Test Service Objects' do # rubocop:disable Metrics/BlockLength
 
   describe 'Find authenticated account' do
     it 'HAPPY: should find an authenticated account' do
+      auth_account_file = 'spec/fixtures/auth_account.json'
+      # # Use this code to get an actual seeded account from API:
+      # response = HTTP.post("#{app.config.API_URL}/auth/authenticate",
+      #   json: { username: @credentials[:username], password: @credentials[:password] })
+      # auth_account_json = response.body.to_s
+      # File.write(auth_account_file, auth_account_json)
+      # puts "Seeded response saved to #{auth_account_file}"
+
+      auth_return_json = File.read(auth_account_file)
       WebMock.stub_request(:post, "#{API_URL}/auth/authenticate")
              .with(body: @credentials.to_json)
-             .to_return(body: @api_account.to_json,
+             .to_return(body: auth_return_json,
                         headers: { 'content-type' => 'application/json' })
 
       account = LostNFound::AuthenticateAccount.new(app.config).call(**@credentials)

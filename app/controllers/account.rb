@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 require 'roda'
-require_relative './app'
+require_relative 'app'
 
 module LostNFound
   # Web controller for LostNFound API
   class App < Roda
-    route('account') do |routing| # rubocop:disable Metrics/BlockLength
-      routing.on do # rubocop:disable Metrics/BlockLength
+    route('account') do |routing|
+      routing.on do
         # GET /account/
         routing.get String do |username|
-          if @current_account && @current_account['username'] == username
+          if @current_account && @current_account.username == username
             view :account, locals: { current_account: @current_account }
           else
             routing.redirect '/auth/login'
@@ -19,12 +19,14 @@ module LostNFound
 
         # POST /account/<registration_token>
         routing.post String do |registration_token|
-          raise 'Passwords do not match or empty' if
-            routing.params['password'].empty? ||
-            routing.params['password'] != routing.params['password_confirm']
+          # raise 'Passwords do not match or empty' if
+          #   routing.params['password'].empty? ||
+          #   routing.params['password'] != routing.params['password_confirm']
+
+          passwords = Form::Passwords.new.call(routing.params)
+          raise Form.message_values(passwords) if passwords.failure?
 
           new_account = VerifyRegistrationToken.new(App.config).call(registration_token)
-
           CreateAccount.new(App.config).call(
             email: new_account['email'],
             username: new_account['username'],

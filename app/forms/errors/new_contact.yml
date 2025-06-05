@@ -1,0 +1,6 @@
+en:
+  errors:
+    contact_type: 'select a contact type'
+    contact_type_valid?: 'invalid contact type'
+    value: 'provide contact information'
+    value_valid?: 'contact information format is invalid'

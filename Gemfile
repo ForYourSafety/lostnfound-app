@@ -22,6 +22,7 @@ gem 'http', '~>5.1'
 gem 'redis', '~>5.0'
 
 # Security
+gem 'dry-validation', '~>1.10'
 gem 'rack-ssl-enforcer'
 gem 'rbnacl', '~>7.1'
 
@@ -31,6 +32,7 @@ gem 'json'
 
 # Debugging
 gem 'pry'
+gem 'rack-test'
 
 # Development
 group :development do
@@ -46,6 +48,5 @@ group :test do
 end
 
 group :development, :test do
-  gem 'rack-test'
   gem 'rerun'
 end
