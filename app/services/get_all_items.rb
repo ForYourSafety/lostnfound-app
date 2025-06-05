@@ -10,8 +10,10 @@ module LostNFound
     end
 
     def call(current_account)
-      response = HTTP.auth("Bearer #{current_account.auth_token}")
-                     .get("#{@config.API_URL}/items")
+      request = HTTP
+      request = HTTP.auth("Bearer #{current_account.auth_token}") if current_account.logged_in?
+
+      response = request.get("#{@config.API_URL}/items")
 
       response.code == 200 ? JSON.parse(response.to_s)['data'] : nil
     end
