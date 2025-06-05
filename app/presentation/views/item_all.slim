@@ -1,13 +1,26 @@
-div class="row" style="vertical-align: bottom;"
-  div class="col-xs-9"
-    h3 All Items
-  div class="col-xs-3"
-table class="table"
-  thead
-    tr
-      th Item name
-  tbody
-    - items.all.each do |item|
-      tr
-        td 
-          a href="/items/#{item.id}" #{item.name}
+div class="row"
+  - items.all.each do |item|
+    div class="col-12 col-md-6 mb-2"
+      a href="/items/#{item.id}" style="text-decoration: none; color: inherit;"
+        div class="card ripple bg-light" data-mdb-ripple-color="light"
+          div class="bg-image hover-overlay"
+            img src="https://picsum.photos/300/150" class="img-fluid w-100" alt="Placeholder Image"
+          div class="card-header"
+            - item_type_class = item.type == "lost" ? "badge-danger" : "badge-success"
+            span class="badge rounded-pill #{item_type_class}" style="margin-bottom: 8px;" #{item.type.capitalize}
+            h5 class="card-title" style="margin-bottom: 10px;"
+              | #{item.name}
+              - if item.tags
+                span style="float: right;"
+                  - colors = ["badge-primary", "badge-secondary", "badge-success", "badge-danger", "badge-warning", "badge-info", "badge-light", "badge-dark"]
+                  - item.tags.each do |tag|
+                    - hash = tag.name.hash % colors.length
+                    span class="badge rounded-pill #{colors[hash]}" style="margin-right: 5px;" #{tag.name}
+          div class="card-body"
+            div style="margin-top: 10px;"
+              h6 class="card-subtitle mb-2 text-muted" Description
+              p class="card-text" #{item.description}
+              - if item.location
+                - location_text = item.type == "lost" ? "Lost at" : "Found at"
+                h6 class="card-subtitle mb-2 text-muted" #{location_text}
+                p class="card-text" #{item.location}
