@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './account'
+require_relative 'account'
 
 module LostNFound
   # Managing session information
