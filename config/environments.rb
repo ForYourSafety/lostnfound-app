@@ -43,8 +43,7 @@ module LostNFound
 
     # Console/Pry configuration
     configure :development, :test do
-      # Suppresses log info/warning outputs in dev/test environments
-      logger.level = Logger::ERROR
+      logger.level = Logger::INFO
 
       # NOTE: env var REDIS_URL only used to wipe the session store (ok to be nil)
       SecureSession.setup(ENV.fetch('REDIS_URL', nil)) # REDIS_URL used again below
@@ -62,7 +61,7 @@ module LostNFound
       # Allows running reload! in pry to restart entire app
       def self.reload! = exec 'pry -r ./spec/test_load_all'
     end
-    
+
     configure :production do
       use Rack::SslEnforcer, hsts: true
 
