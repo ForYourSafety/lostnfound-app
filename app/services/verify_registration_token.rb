@@ -17,11 +17,12 @@ module LostNFound
       return new_account unless Time.now.to_i > exp
 
       # Token has expired
-      raise(VerifyRegistration::VerificationError,
+      raise(VerifyRegistrationToken::VerificationError,
             'Registration token has expired. Please submit a new request again.')
-    rescue StandardError
+    rescue StandardError => e
       # Token is invalid
-      raise(VerifyRegistration::VerificationError, 'Invalid token')
+      App.logger.warn "Invalid registration token: #{e.inspect}\n#{e.backtrace.join("\n")}"
+      raise(VerifyRegistrationToken::VerificationError, 'Invalid token')
     end
   end
 end

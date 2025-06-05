@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Credence
+module LostNFound
   # Behaviors of a tag entity
   class Tag
     attr_reader :id, :name, :description

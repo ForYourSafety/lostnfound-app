@@ -2,16 +2,18 @@
 
 require 'http'
 
-# Returns all projects belonging to an account
-class GetAllitems
-  def initialize(config)
-    @config = config
-  end
+module LostNFound
+  # Returns all projects belonging to an account
+  class GetAllItems
+    def initialize(config)
+      @config = config
+    end
 
-  def call(current_account)
-    response = HTTP.auth("Bearer #{current_account.auth_token}")
-                   .get("#{@config.API_URL}/items")
+    def call(current_account)
+      response = HTTP.auth("Bearer #{current_account.auth_token}")
+                     .get("#{@config.API_URL}/items")
 
-    response.code == 200 ? JSON.parse(response.to_s)['data'] : nil
+      response.code == 200 ? JSON.parse(response.to_s)['data'] : nil
+    end
   end
 end

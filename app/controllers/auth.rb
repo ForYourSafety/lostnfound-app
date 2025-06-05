@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 require 'roda'
-require_relative './app'
+require_relative 'app'
 
 module LostNFound
   # Web controller for LostNFound API
   class App < Roda
-    route('auth') do |routing| # rubocop:disable Metrics/BlockLength
+    route('auth') do |routing|
       @login_route = '/auth/login'
-      routing.is 'login' do # rubocop:disable Metrics/BlockLength
+      routing.is 'login' do
         # GET /auth/login
         routing.get do
           view :login
@@ -32,7 +32,7 @@ module LostNFound
           )
 
           CurrentSession.new(session).current_account = current_account
-          flash[:notice] = "Welcome back #{current_account.username}!"
+
           routing.redirect '/'
         rescue AuthenticateAccount::UnauthorizedError
           flash.now[:error] = 'Username and password did not match our records'
@@ -102,7 +102,7 @@ module LostNFound
                          registration_token: }
         rescue VerifyRegistrationToken::VerificationError => e
           App.logger.warn "Email token verification error: #{e.inspect}"
-          flash[:error] = e.message
+          flash[:error] = "Invalid registration token: #{e.message}"
           routing.redirect @register_route
         rescue StandardError => e
           App.logger.error "Could not process registration: #{e.inspect}"

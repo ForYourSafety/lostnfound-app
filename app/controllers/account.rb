@@ -19,10 +19,6 @@ module LostNFound
 
         # POST /account/<registration_token>
         routing.post String do |registration_token|
-          # raise 'Passwords do not match or empty' if
-          #   routing.params['password'].empty? ||
-          #   routing.params['password'] != routing.params['password_confirm']
-
           passwords = Form::Passwords.new.call(routing.params)
           raise Form.message_values(passwords) if passwords.failure?
 
@@ -36,10 +32,12 @@ module LostNFound
           flash[:notice] = 'Account created! Please login'
           routing.redirect '/auth/login'
         rescue CreateAccount::InvalidAccount => e
+          App.logger.warn "Invalid account creation attempt: #{e.inspect}\n#{e.backtrace.join("\n")}"
           flash[:error] = e.message
           routing.redirect '/auth/register'
         rescue StandardError => e
-          flash[:error] = e.message
+          App.logger.warn "Unexpected error during account creation: #{e.inspect}\n#{e.backtrace.join("\n")}"
+          flash[:error] = 'An unexpected error occurred while creating your account. Please try again.'
           routing.redirect(
             "#{App.config.APP_URL}/auth/register/#{registration_token}"
           )
