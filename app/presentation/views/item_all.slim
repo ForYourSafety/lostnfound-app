@@ -1,0 +1,13 @@
+div class="row" style="vertical-align: bottom;"
+  div class="col-xs-9"
+    h3 All Items
+  div class="col-xs-3"
+table class="table"
+  thead
+    tr
+      th Item name
+  tbody
+    - items.all.each do |item|
+      tr
+        td 
+          a href="/account/items/#{item.id}" #{item.name}
