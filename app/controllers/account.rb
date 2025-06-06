@@ -20,7 +20,11 @@ module LostNFound
         # POST /account/<registration_token>
         routing.post String do |registration_token|
           passwords = Form::Passwords.new.call(routing.params)
-          raise Form.message_values(passwords) if passwords.failure?
+
+          if passwords.failure?
+            flash[:error] = Form.message_values(passwords)
+            routing.redirect "#{App.config.APP_URL}/auth/register/#{registration_token}"
+          end
 
           new_account = VerifyRegistrationToken.new(App.config).call(registration_token)
           CreateAccount.new(App.config).call(
