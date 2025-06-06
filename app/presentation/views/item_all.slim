@@ -1,21 +1,38 @@
 div class="row"
-  - items.all.each do |item|
-    div class="col-12 col-md-6 mb-2"
-      a href="/items/#{item.id}" style="text-decoration: none; color: inherit;"
+  - items.all.each_with_index do |item, item_idx|
+    div class="col-12 col-md-4 mb-2"
+      a href="/items/#{item.id}"
         div class="card ripple bg-light" data-mdb-ripple-color="light"
           div class="bg-image hover-overlay"
-            img src="https://picsum.photos/300/150" class="img-fluid w-100" alt="Placeholder Image"
+            - if item.image_urls.any?
+              div id="carousel_#{item_idx}" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init=""
+                div class="carousel-indicators"
+                  - item.image_urls.count.times do |image_idx|
+                    - active_class = image_idx == 0 ? "active" : ""
+                    button type="button" data-mdb-target="carousel_#{item_idx}" data-mdb-slide-to="#{image_idx}" class="#{active_class}" aria-current="true" aria-label="Slide #{image_idx + 1}"
+                div class="carousel-inner shadow-4-strong"
+                  - item.image_urls.each_with_index do |image_url, image_idx|
+                    - active_class = image_idx == 0 ? "active" : ""
+                    div class="carousel-item #{active_class}"
+                      img src="#{image_url}" class="d-block w-100" alt="Item Image #{image_idx + 1}"
+                button class="carousel-control-prev" type="button" data-mdb-target="#carousel_#{item_idx}" data-mdb-slide="prev"
+                  span class="carousel-control-prev-icon" aria-hidden="true"
+                button class="carousel-control-next" type="button" data-mdb-target="#carousel_#{item_idx}" data-mdb-slide="next"
+                  span class="carousel-control-next-icon" aria-hidden="true"
+            - else
+              h6.text-center.pt-3 No image available
           div class="card-header"
             - item_type_class = item.type == "lost" ? "badge-danger" : "badge-success"
-            span class="badge rounded-pill #{item_type_class}" style="margin-bottom: 8px;" #{item.type.capitalize}
-            h5 class="card-title" style="margin-bottom: 10px;"
+            h5
+              span class="badge rounded-pill #{item_type_class}" #{item.type.capitalize}
+            h4 class="card-title" style="margin-bottom: 10px;"
               | #{item.name}
               - if item.tags
                 span style="float: right;"
                   - colors = ["badge-primary", "badge-secondary", "badge-success", "badge-danger", "badge-warning", "badge-info", "badge-light", "badge-dark"]
                   - item.tags.each do |tag|
                     - hash = tag.name.hash % colors.length
-                    span class="badge rounded-pill #{colors[hash]}" style="margin-right: 5px;" #{tag.name}
+                    span class="badge rounded-pill #{colors[hash]} ms-1" style="font-size: 0.5em;"= tag.name
           div class="card-body"
             div style="margin-top: 10px;"
               h6 class="card-subtitle mb-2 text-muted" Description
