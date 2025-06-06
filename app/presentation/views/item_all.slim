@@ -25,7 +25,7 @@ div class="row"
             - item_type_class = item.type == "lost" ? "badge-danger" : "badge-success"
             h5
               span class="badge rounded-pill #{item_type_class}" #{item.type.capitalize}
-            h4 class="card-title" style="margin-bottom: 10px;"
+            h4 class="card-title"
               | #{item.name}
               - if item.tags
                 span style="float: right;"
@@ -34,10 +34,9 @@ div class="row"
                     - hash = tag.name.hash % colors.length
                     span class="badge rounded-pill #{colors[hash]} ms-1" style="font-size: 0.5em;"= tag.name
           div class="card-body"
-            div style="margin-top: 10px;"
-              h6 class="card-subtitle mb-2 text-muted" Description
-              p class="card-text" #{item.description}
-              - if item.location
-                - location_text = item.type == "lost" ? "Lost at" : "Found at"
-                h6 class="card-subtitle mb-2 text-muted" #{location_text}
-                p class="card-text" #{item.location}
+            h6 class="card-subtitle mb-2 text-muted" Description
+            p class="card-text" #{item.description}
+            - if item.location
+              - location_text = item.type == "lost" ? "Lost at" : "Found at"
+              h6 class="card-subtitle mb-2 text-muted" #{location_text}
+              p class="card-text" #{item.location}
