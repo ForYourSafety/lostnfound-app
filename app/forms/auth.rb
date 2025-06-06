@@ -27,8 +27,8 @@ module LostNFound
       config.messages.load_paths << File.join(__dir__, 'errors/password.yml')
 
       params do
-        required(:password).filled
-        required(:password_confirm).filled
+        required(:password).filled(:string)
+        required(:password_confirm).filled(:string)
       end
 
       def enough_entropy?(string)
@@ -36,11 +36,19 @@ module LostNFound
       end
 
       rule(:password) do
-        key.failure('Password must be more complex') unless enough_entropy?(value)
+        key.failure(:password) if value.strip.empty?
+      end
+
+      rule(:password_confirm) do
+        key.failure(:password_confirm) if value.strip.empty?
+      end
+
+      rule(:password) do
+        key.failure(:password_entropy) unless enough_entropy?(value)
       end
 
       rule(:password, :password_confirm) do
-        key.failure('Passwords do not match') unless values[:password].eql?(values[:password_confirm])
+        key.failure(:passwords_match) unless values[:password].eql?(values[:password_confirm])
       end
     end
   end
