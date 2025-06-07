@@ -5,13 +5,25 @@ require_relative 'app'
 
 module LostNFound
   # Web controller for LostNFound API
-  class App < Roda
+  class App < Roda # rubocop:disable Metrics/ClassLength
+    def go_oauth_url(config)
+      url = config.GO_OAUTH_URL
+      client_id = config.GO_CLIENT_ID
+      scope = config.GO_SCOPE
+      redirect_uri = config.GO_REDIRECT_URI
+      response_type = 'code'
+
+      "#{url}?client_id=#{client_id}&redirect_uri=#{redirect_uri}&response_type=#{response_type}&scope=#{scope}"
+    end
+
     route('auth') do |routing|
       @login_route = '/auth/login'
       routing.is 'login' do
         # GET /auth/login
         routing.get do
-          view :login
+          view :login, locals: {
+            go_oauth_url: go_oauth_url(App.config)
+          }
         end
 
         # POST /auth/login
@@ -41,6 +53,34 @@ module LostNFound
         rescue AuthenticateAccount::ApiServerError => e
           App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
           flash[:error] = 'Our servers are not responding -- please try later'
+          response.status = 500
+          routing.redirect @login_route
+        end
+      end
+      @oauth_callback = '/auth/sso_callback'
+      routing.is 'sso_callback' do
+        # GET /auth/sso_callback
+        routing.get do
+          authorized = AuthorizeGoogleAccount
+                       .new(App.config)
+                       .call(routing.params['code'])
+
+          current_account = Account.new(
+            authorized[:account],
+            authorized[:auth_token]
+          )
+
+          CurrentSession.new(session).current_account = current_account
+
+          flash[:notice] = "Welcome #{current_account.username}!"
+          routing.redirect '/'
+        rescue AuthorizeGoogleAccount::UnauthorizedError
+          flash[:error] = 'Could not login with Google'
+          response.status = 403
+          routing.redirect @login_route
+        rescue StandardError => e
+          puts "SSO LOGIN ERROR: #{e.inspect}\n#{e.backtrace}"
+          flash[:error] = 'Unexpected API Error'
           response.status = 500
           routing.redirect @login_route
         end
