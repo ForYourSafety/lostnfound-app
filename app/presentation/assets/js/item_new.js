@@ -10,25 +10,28 @@ window.onload = () => {
         selectAll: false
     });
 
+    setupFilePond();
 
     typeLost = document.getElementById('type-lost');
     typeFound = document.getElementById('type-found');
 
     typeFilter = urlParams.get('type') || 'found';
-    updateTypeStyle();
+    updateType();
 
     typeLost.addEventListener('click', function() {
         typeFilter = 'lost';
-        updateTypeStyle();
+        updateType();
     });
 
     typeFound.addEventListener('click', function() {
         typeFilter = 'found';
-        updateTypeStyle();
+        updateType();
     });
 }
 
-function updateTypeStyle() {
+function updateType() {
+    updateUrl();
+
     typeLost.classList.toggle('badge-danger', typeFilter === 'lost');
     typeLost.classList.toggle('badge-light', typeFilter !== 'lost');
     typeFound.classList.toggle('badge-success', typeFilter === 'found');
@@ -116,3 +119,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+
+function setupFilePond() {
+    FilePond.registerPlugin(
+        FilePondPluginImagePreview,
+        FilePondPluginFileValidateType,
+    );
+
+    FilePond.create(
+        document.getElementById('image-upload'), {
+            acceptedFileTypes: ['image/*']
+        }
+    );
+
+    console.log('FilePond initialized');
+}

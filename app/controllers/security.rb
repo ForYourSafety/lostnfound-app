@@ -13,8 +13,10 @@ module LostNFound
     plugin :multi_route
 
     FONT_SRC = %w[https://cdn.jsdelivr.net https://fonts.gstatic.com https://cdnjs.cloudflare.com].freeze
-    SCRIPT_SRC = %w[https://cdn.jsdelivr.net].freeze
-    STYLE_SRC = %w[https://bootswatch.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com].freeze
+    SCRIPT_SRC = %w[https://cdn.jsdelivr.net http://unpkg.com].freeze
+    STYLE_SRC = %w[https://bootswatch.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com
+                   https://fonts.googleapis.com https://unpkg.com].freeze
+    IMG_SRC = ['https://img.lostnfound.yikuo.dev'].freeze
 
     configure :production do
       use Rack::SslEnforcer, hsts: true
@@ -45,9 +47,9 @@ module LostNFound
         report_only: false,
         preserve_schemes: true,
         default_src: %w['self'],
-        child_src: %w['self'],
+        child_src: %w['self' blob:],
         connect_src: %w[wws:],
-        img_src: %w['self' https://img.lostnfound.yikuo.dev data:],
+        img_src: %w['self' data: blob:] + IMG_SRC,
         font_src: %w['self'] + FONT_SRC,
         script_src: %w['self'] + SCRIPT_SRC,
         style_src: %W['self' 'unsafe-inline'] + STYLE_SRC, # allows inline styles
