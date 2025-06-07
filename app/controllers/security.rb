@@ -47,7 +47,7 @@ module LostNFound
         default_src: %w['self'],
         child_src: %w['self'],
         connect_src: %w[wws:],
-        img_src: %w['self' https://img.lostnfound.yikuo.dev],
+        img_src: %w['self' https://img.lostnfound.yikuo.dev data:],
         font_src: %w['self'] + FONT_SRC,
         script_src: %w['self'] + SCRIPT_SRC,
         style_src: %W['self' 'unsafe-inline'] + STYLE_SRC, # allows inline styles
