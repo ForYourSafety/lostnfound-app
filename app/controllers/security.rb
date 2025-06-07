@@ -12,9 +12,9 @@ module LostNFound
     plugin :environments
     plugin :multi_route
 
-    FONT_SRC = %w[https://cdn.jsdelivr.net].freeze
+    FONT_SRC = %w[https://cdn.jsdelivr.net https://fonts.gstatic.com https://cdnjs.cloudflare.com].freeze
     SCRIPT_SRC = %w[https://cdn.jsdelivr.net].freeze
-    STYLE_SRC = %w[https://bootswatch.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com].freeze
+    STYLE_SRC = %w[https://bootswatch.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com].freeze
 
     configure :production do
       use Rack::SslEnforcer, hsts: true
@@ -50,7 +50,7 @@ module LostNFound
         img_src: %w['self'],
         font_src: %w['self'] + FONT_SRC,
         script_src: %w['self'] + SCRIPT_SRC,
-        style_src: %W['self'] + STYLE_SRC,
+        style_src: %W['self', 'unsafe-inline'] + STYLE_SRC, # allows inline styles
         form_action: %w['self'],
         frame_ancestors: %w['none'],
         object_src: %w['none'],
