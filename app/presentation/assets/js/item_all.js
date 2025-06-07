@@ -40,41 +40,26 @@ window.onload = () => {
     typeFilter = urlParams.get('type') || 'found';
     updateTypeStyle();
 
-    typeLost.addEventListener('change', function() {
-        if (typeLost.checked) {
-            typeFilter = 'lost';
-            updateTypeStyle();
-            updateFilters();
-        }
+    typeLost.addEventListener('click', function() {
+        typeFilter = 'lost';
+        updateTypeStyle();
+        updateFilters();
     });
 
-    typeFound.addEventListener('change', function() {
-        if (typeFound.checked) {
-            typeFilter = 'found';
-            updateTypeStyle();
-            updateFilters();
-        }
+    typeFound.addEventListener('click', function() {
+        typeFilter = 'found';
+        updateTypeStyle();
+        updateFilters();
     });
 
     updateFilters();
 }
 
 function updateTypeStyle() {
-    if (typeFilter === 'lost') {
-        typeLost.checked = true;
-        typeFound.checked = false;
-    } else {
-        typeLost.checked = false;
-        typeFound.checked = true;
-    }
-
-    const typeLostLabel = typeLost.nextElementSibling;
-    const typeFoundLabel = typeFound.nextElementSibling;
-
-    typeLostLabel.classList.toggle('btn-warning', typeFilter === 'lost');
-    typeLostLabel.classList.toggle('btn-outline-warning', typeFilter !== 'lost');
-    typeFoundLabel.classList.toggle('btn-info', typeFilter === 'found');
-    typeFoundLabel.classList.toggle('btn-outline-info', typeFilter !== 'found');
+    typeLost.classList.toggle('badge-danger', typeFilter === 'lost');
+    typeLost.classList.toggle('badge-light', typeFilter !== 'lost');
+    typeFound.classList.toggle('badge-success', typeFilter === 'found');
+    typeFound.classList.toggle('badge-light', typeFilter !== 'found');
 }
 
 function searchVisible(item) {

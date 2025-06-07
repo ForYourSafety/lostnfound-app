@@ -2,11 +2,9 @@
   .col-md-4
     .d-flex.align-items-center
       h1 Items
-      .btn-group.ms-3
-        input type="radio" class="btn-check" name="type-filter-group" id="type-lost" autocomplete="off"
-        label.btn.btn-warning.btn-lg for="type-lost" data-mdb-ripple-init="" Lost
-        input type="radio" class="btn-check" name="type-filter-group" id="type-found" autocomplete="off"
-        label.btn.btn-info.btn-lg for="type-found" data-mdb-ripple-init="" Found
+      h2.ms-3.d-flex
+        span.badge.rounded-pill.badge-danger role="button" id="type-lost" data-mdb-ripple-init="" Lost
+        span.badge.rounded-pill.badge-success.ms-1 role="button" id="type-found" data-mdb-ripple-init="" Found
   .col-md-8
     .d-flex.justify-content-end
       .w-25
@@ -16,7 +14,7 @@
             option value="#{tag.id}"
               - hash = tag.description.hash % colors.length
               span class="badge rounded-pill #{colors[hash]} ms-1"= tag.name
-      .form-outline.w-25 data-mdb-input-init=""
+      .form-outline.w-25.ms-3 data-mdb-input-init=""
         input.form-control type="search" aria-label="Search" aria-describedby="search-addon" id="search_input"
         label.form-label for="search_input" Search
         i.fas.fa-search style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"
