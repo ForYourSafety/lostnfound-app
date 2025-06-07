@@ -15,34 +15,43 @@ window.onload = () => {
     typeLost = document.getElementById('type-lost');
     typeFound = document.getElementById('type-found');
 
-    typeFilter = urlParams.get('type') || 'found';
+    itemType = urlParams.get('type') || 'found';
     updateType();
 
     typeLost.addEventListener('click', function() {
-        typeFilter = 'lost';
+        itemType = 'lost';
         updateType();
     });
 
     typeFound.addEventListener('click', function() {
-        typeFilter = 'found';
+        itemType = 'found';
         updateType();
     });
+
+    // Add event listener for the form submit button
+    const submitButton = document.getElementById('submit-button');
+    submitButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        submitForm()
+    });
 }
+
 
 function updateType() {
     updateUrl();
 
-    typeLost.classList.toggle('badge-danger', typeFilter === 'lost');
-    typeLost.classList.toggle('badge-light', typeFilter !== 'lost');
-    typeFound.classList.toggle('badge-success', typeFilter === 'found');
-    typeFound.classList.toggle('badge-light', typeFilter !== 'found');
+    typeLost.classList.toggle('badge-danger', itemType === 'lost');
+    typeLost.classList.toggle('badge-light', itemType !== 'lost');
+    typeFound.classList.toggle('badge-success', itemType === 'found');
+    typeFound.classList.toggle('badge-light', itemType !== 'found');
 }
 
 
 function updateUrl() {
     const urlParams = new URLSearchParams();
 
-    urlParams.set('type', typeFilter);
+    urlParams.set('type', itemType);
 
     const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
     window.history.pushState({ path: newUrl }, '', newUrl);
@@ -72,6 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
     addContactButton.addEventListener('click', function() {
         // Clone the contact entry
         const newContactEntry = addContactEntry.cloneNode(true);
+        newContactEntry.classList.add('contact-entry');
 
         // Get the values
         const select = addContactEntry.querySelector('#add-contact-type');
@@ -98,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
         newContactEntry.removeAttribute('id');
         newSelect.removeAttribute('id');
         newInput.removeAttribute('id');
+        newInput.setAttribute('required', '');      
         const button = newContactEntry.querySelector('button');
         button.removeAttribute('id');
 
@@ -127,11 +138,42 @@ function setupFilePond() {
         FilePondPluginFileValidateType,
     );
 
-    FilePond.create(
+    imageFileUpload = FilePond.create(
         document.getElementById('image-upload'), {
             acceptedFileTypes: ['image/*']
         }
     );
 
     console.log('FilePond initialized');
+}
+
+function submitForm() {
+    // Validate the form
+    const form = document.getElementById('item-form');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return false;
+    }
+
+    // Get field values
+    const itemName = document.getElementById('item-name').value;
+    const itemDescription = document.getElementById('item-description').value;
+    const challengeQuestion = document.getElementById('challenge-question').value;
+    const itemTags = tagSelect.selectedValues;
+    const images = imageFileUpload.getFiles().map(file => file.file);
+
+    const contacts = Array.from(document.querySelectorAll('#contact-list .contact-entry')).map(entry => {
+        const type = entry.querySelector('.contact-type').value;
+        const value = entry.querySelector('.contact-value').value;
+        return { type, value };
+    });
+
+    console.log('Item Name:', itemName);
+    console.log('Item Description:', itemDescription);
+    console.log('Item Tags:', itemTags);
+    console.log('Item Type:', itemType);
+    console.log('Item Contacts:', contacts);
+    console.log('Challenge Question:', challengeQuestion);
+    console.log('Images:', images);
+    
 }

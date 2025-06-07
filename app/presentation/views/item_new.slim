@@ -1,78 +1,79 @@
 div class="container"
-  div class="row"
+  form.needs-validation id="item-form" novalidate=""
     div class="row"
-      div class="col-md-6 d-flex align-items-center"
-        div.form-outline data-mdb-input-init=""
-          input.form-control.form-control-lg type="text" id="item_name"
-          label.form-label for="item_name" Item Name
-          .invalid-feedback Please enter an item name.
-        h2.ms-3.d-flex
-          span.badge.rounded-pill.badge-light role="button" id="type-lost" data-mdb-ripple-init="" Lost
-          span.badge.rounded-pill.badge-light.ms-1 role="button" id="type-found" data-mdb-ripple-init="" Found
-      div class="col-md-6 text-end"
-        button.btn.btn-success.ms-2.mt-2 data-mdb-ripple-init=""
-          i.fas.fa-paper-plane.me-md-2
-          |  Post
-  hr
-  div class="row"
-    div class="col-md-4"
-      h5.text-center.pt-3
-        | Images
-      input type="file" id="image-upload" class="filepond" name="filepond" multiple="" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="10"
-    div class="col-md-8"
       div class="row"
-        div class="col-md-6"
-          h5 Description
+        div class="col-md-6 d-flex align-items-center"
           div.form-outline data-mdb-input-init=""
-            textarea.form-control rows="6" id="item_description"
-            label.form-label for="item_description"
-              | Description (e.g. color, brand, etc.)
+            input.form-control.form-control-lg type="text" id="item-name" required=""
+            label.form-label for="item-name" Item Name
+            .invalid-feedback Please enter an item name.
+          h2.ms-3.d-flex
+            span.badge.rounded-pill.badge-light role="button" id="type-lost" data-mdb-ripple-init="" Lost
+            span.badge.rounded-pill.badge-light.ms-1 role="button" id="type-found" data-mdb-ripple-init="" Found
+        div class="col-md-6 text-end"
+          button.btn.btn-success.ms-2.mt-2 data-mdb-ripple-init="" id="submit-button"
+            i.fas.fa-paper-plane.me-md-2
+            |  Post
+    hr
+    div class="row"
+      div class="col-md-4"
+        h5.text-center.pt-3
+          | Images
+        input type="file" id="image-upload" class="filepond" name="filepond" multiple="" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="10"
+      div class="col-md-8"
+        div class="row"
+          div class="col-md-6"
+            h5 Description
+            div.form-outline data-mdb-input-init=""
+              textarea.form-control rows="6" id="item-description"
+              label.form-label for="item-description"
+                | Description (e.g. color, brand, etc.)
 
-          h5.mt-3 Location
-          div.form-outline data-mdb-input-init=""
-            input.form-control type="text" id="item_location"
-            label.form-label for="item_location"
-              | Location (i.e. where it was lost/found)
-        div class="col-md-6"
-          h5 Tags
-          div
-            select multiple="multiple" name="tag-select" id="tag-select" data-placeholder="Add tags..."
-              - colors = ["badge-primary", "badge-secondary", "badge-success", "badge-danger", "badge-warning", "badge-info", "badge-light", "badge-dark"]
-              - all_tags.all.each do |tag|
-                option value="#{tag.id}"
-                  - hash = tag.description.hash % colors.length
-                  span class="badge rounded-pill #{colors[hash]} ms-1"= tag.name
-          div.my-3
-            h5 Contact Information
-            . id="contact-list"
-            .d-flex.align-items-center.mb-2 id="add-contact-entry"
-              select.form-select.me-2.flex-shrink-0 style="width: 30%;" data-mdb-select-init="" id="add-contact-type"
-                option value="email" E-mail
-                option value="phone" Phone
-                option value="address" Address
-                option value="facebook" Facebook
-                option value="twitter" Twitter
-                option value="instagram" Instagram
-                option value="whatsapp" WhatsApp
-                option value="telegram" Telegram
-                option value="line" Line
-                option value="signal" Signal
-                option value="wechat" WeChat
-                option value="discord" Discord
-                option value="other" Other
-              .input-group.form-outline.me-2 data-mdb-input-init=""
-                input.form-control id="add-contact-value" type="text"
-                label.form-label for="add-contact-value" Value
-                .invalid-feedback Please enter a value.
-              button.btn.btn-success.btn-floating type="button" id="add-contact-button" data-mdb-ripple-init=""
-                i.fas.fa-plus
-          h5.mt-4 Challenge Question
-          p
-            | If provided, other users can include their answer to your question when requesting your contact information.
-          div.form-outline data-mdb-input-init=""
-            textarea.form-control rows="3" id="challenge_question"
-            label.form-label for="challenge_question"
-              | Question (e.g. what's on the lock screen?)
+            h5.mt-3 Location
+            div.form-outline data-mdb-input-init=""
+              input.form-control type="text" id="item-location"
+              label.form-label for="item-location"
+                | Location (i.e. where it was lost/found)
+          div class="col-md-6"
+            h5 Tags
+            div
+              select multiple="multiple" name="tag-select" id="tag-select" data-placeholder="Add tags..."
+                - colors = ["badge-primary", "badge-secondary", "badge-success", "badge-danger", "badge-warning", "badge-info", "badge-light", "badge-dark"]
+                - all_tags.all.each do |tag|
+                  option value="#{tag.id}"
+                    - hash = tag.description.hash % colors.length
+                    span class="badge rounded-pill #{colors[hash]} ms-1"= tag.name
+            div.my-3
+              h5 Contact Information
+              . id="contact-list"
+              .d-flex.align-items-center.mb-2 id="add-contact-entry"
+                select.form-select.me-2.flex-shrink-0.contact-type style="width: 30%;" data-mdb-select-init="" id="add-contact-type"
+                  option value="email" E-mail
+                  option value="phone" Phone
+                  option value="address" Address
+                  option value="facebook" Facebook
+                  option value="twitter" Twitter
+                  option value="instagram" Instagram
+                  option value="whatsapp" WhatsApp
+                  option value="telegram" Telegram
+                  option value="line" Line
+                  option value="signal" Signal
+                  option value="wechat" WeChat
+                  option value="discord" Discord
+                  option value="other" Other
+                .input-group.form-outline.me-2 data-mdb-input-init=""
+                  input.form-control.contact-value id="add-contact-value" type="text"
+                  label.form-label for="add-contact-value" Value
+                  .invalid-feedback Please enter a value.
+                button.btn.btn-success.btn-floating type="button" id="add-contact-button" data-mdb-ripple-init=""
+                  i.fas.fa-plus
+            h5.mt-4 Challenge Question
+            p
+              | If provided, other users can include their answer to your question when requesting your contact information.
+            div.form-outline data-mdb-input-init=""
+              textarea.form-control rows="3" id="challenge-question"
+              label.form-label for="challenge-question"
+                | Question (e.g. what's on the lock screen?)
 
 
 == assets([:js, :item_new])
