@@ -1,6 +1,23 @@
+.row
+  .col-md-3
+    h1 Items
+  .col-md-9
+    .row.text-end.d-flex.justify-content-end
+      .w-25
+        select multiple="multiple" name="tag-filter" id="tag-filter" data-placeholder="Filter by tags"
+          - colors = ["badge-primary", "badge-secondary", "badge-success", "badge-danger", "badge-warning", "badge-info", "badge-light", "badge-dark"]
+          - all_tags.all.each do |tag|
+            option value="#{tag.id}"
+              - hash = tag.description.hash % colors.length
+              span class="badge rounded-pill #{colors[hash]} ms-1"= tag.name
+      .form-outline.w-25 data-mdb-input-init=""
+        input.form-control type="search" aria-label="Search" aria-describedby="search-addon" id="search_input"
+        label.form-label for="search_input" Search
+        i.fas.fa-search style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"
+
 div class="row"
   - items.all.each_with_index do |item, item_idx|
-    div class="col-12 col-md-4 mb-2"
+    div class="col-12 col-md-4 mb-2 item-card" data-tags="#{item.tags.map(&:id).join(',')}" data-item-id="#{item.id}" data-item-type="#{item.type}"
       a href="/items/#{item.id}"
         div class="card ripple bg-light" data-mdb-ripple-color="light"
           div class="bg-image hover-overlay"
@@ -42,3 +59,5 @@ div class="row"
               - location_text = item.type == "lost" ? "Lost at" : "Found at"
               h6 class="card-subtitle mb-2 text-muted" #{location_text}
               p class="card-text" #{item.location}
+
+== assets([:js, :item_all])

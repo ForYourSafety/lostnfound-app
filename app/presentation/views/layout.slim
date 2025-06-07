@@ -14,8 +14,12 @@ html
     / MDB
     link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.0.0/css/mdb.min.css"
     
+    / Multi-select-tag
+    link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@4.0.1/dist/css/multi-select-tag.min.css"
+
     / Custom CSS
-    == assets(:css)
+    == assets([:css, :style])
+    == assets([:css, :multiselect])
   body
 
     == render :nav
@@ -25,3 +29,4 @@ html
         == yield
 
     script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.0.0/js/mdb.umd.min.js"
+    == assets([:js, :multiselect])

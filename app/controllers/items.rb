@@ -14,8 +14,11 @@ module LostNFound
             item_id: item_id
           )
 
-          response.status = 404 if item_json.nil?
-          routing.halt
+          if item_json.nil?
+            flash[:error] = "Item with ID #{item_id} not found."
+            routing.redirect '/items'
+            return
+          end
 
           item = Item.new(item_json)
 
@@ -25,12 +28,13 @@ module LostNFound
 
         # GET /items/
         routing.get do
-          item_list = GetAllItems.new(App.config).call(@current_account)
+          item_data = GetAllItems.new(App.config).call(@current_account)
 
-          items = Items.new(item_list)
+          items = Items.new(item_data['data'])
+          all_tags = Tags.new(item_data['included']['all_tags'])
 
           view :item_all,
-               locals: { current_user: @current_account, items: }
+               locals: { current_user: @current_account, items: items, all_tags: all_tags }
         end
       end
     end
