@@ -5,7 +5,7 @@ require 'http'
 module LostNFound
   # Returns an authenticated user, or nil
   class AuthenticateAccount
-    class UnauthorizedError < StandardError; end
+    class NotAuthenticatedError < StandardError; end
     class ApiServerError < StandardError; end
 
     def initialize(config)
@@ -13,17 +13,16 @@ module LostNFound
     end
 
     def call(username:, password:)
+      credentials = { username: username, password: password }
       response = HTTP.post("#{@config.API_URL}/auth/authenticate",
-                           json: { username:, password: })
-      raise(UnauthorizedError) if response.code == 403
+                           json: SignedMessage.sign(credentials))
+      raise(NotAuthenticatedError) if response.code == 401
       raise(ApiServerError) if response.code != 200
 
       account_info = JSON.parse(response.to_s)['data']['attributes']
 
       { account: account_info['account'],
         auth_token: account_info['auth_token'] }
-    rescue HTTP::ConnectionError
-      raise ApiServerError
     end
   end
 end

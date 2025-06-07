@@ -29,9 +29,8 @@ module LostNFound
 
       reg_details['verification_url'] =
         "#{@config.APP_URL}/auth/register/#{registration_token}"
-
       response = HTTP.post("#{@config.API_URL}/auth/register",
-                           json: reg_details)
+                           json: SignedMessage.sign(reg_details))
 
       raise(VerificationError) unless response.code == 202
 

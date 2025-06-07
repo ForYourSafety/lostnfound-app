@@ -4,7 +4,7 @@ require 'delegate'
 require 'roda'
 require 'figaro'
 require 'logger'
-require 'rack/ssl-enforcer'
+# require 'rack/ssl-enforcer'
 require 'rack/session'
 require 'rack/session/redis'
 require_relative '../require_app'
@@ -17,15 +17,11 @@ module LostNFound
 
     # Environment variables setup
     Figaro.application = Figaro::Application.new(
-      environment:,
+      environment: environment,
       path: File.expand_path('config/secrets.yml')
     )
     Figaro.load
     def self.config = Figaro.env
-
-    # Secure session configuration
-    ONE_MONTH = 30 * 24 * 60 * 60
-    SecureMessage.setup(ENV.delete('MSG_KEY'))
 
     # HTTP Request logging
     configure :development, :production do
@@ -39,18 +35,25 @@ module LostNFound
     # Allows binding.pry in dev/test and rake console in production
     require 'pry'
 
+    # Secure session configuration
+    ONE_MONTH = 30 * 24 * 60 * 60
+    @redis_url = ENV.delete('REDISCLOUD_URL')
+    SecureMessage.setup(ENV.delete('MSG_KEY'))
+    SignedMessage.setup(ENV.delete('SIGNING_KEY'))
+    SecureSession.setup(@redis_url) # only used in dev to wipe session store
+
     # Console/Pry configuration
     configure :development, :test do
       logger.level = Logger::INFO
 
-      # NOTE: env var REDIS_URL only used to wipe the session store (ok to be nil)
-      SecureSession.setup(ENV.fetch('REDIS_URL', nil))
-
       # use Rack::Session::Cookie,
-      #     expire_after: ONE_MONTH, secret: config.SESSION_SECRET
+      #     expire_after: ONE_MONTH,
+      #     secret: config.SESSION_SECRET
 
       use Rack::Session::Pool,
-          expire_after: ONE_MONTH
+          expire_after: ONE_MONTH,
+          httponly: true,
+          same_site: :lax
 
       # use Rack::Session::Redis,
       #     expire_after: ONE_MONTH,
@@ -61,10 +64,7 @@ module LostNFound
     end
 
     configure :production do
-      use Rack::SslEnforcer, hsts: true
-
-      @redis_url = ENV.delete('REDISCLOUD_URL')
-      SecureSession.setup(@redis_url) # Only used for wiping redis sessions with rake session:wipe
+      # use Rack::SslEnforcer, hsts: true
 
       use Rack::Session::Redis,
           expire_after: ONE_MONTH,
