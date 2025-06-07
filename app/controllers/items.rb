@@ -14,7 +14,8 @@ module LostNFound
             item_id: item_id
           )
 
-          routing.halt(404) if item_json.nil?
+          response.status = 404 if item_json.nil?
+          routing.halt
 
           item = Item.new(item_json)
 
