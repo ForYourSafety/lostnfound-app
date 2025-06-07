@@ -1,7 +1,12 @@
 .row
-  .col-md-3
+  .col-md-4
     h1 Items
-  .col-md-9
+    .btn-group
+      input type="radio" class="btn-check" name="type-filter-group" id="type-lost" autocomplete="off"
+      label.btn.btn-warning.btn-rounded for="type-lost" data-mdb-ripple-init="" Lost
+      input type="radio" class="btn-check" name="type-filter-group" id="type-found" autocomplete="off"
+      label.btn.btn-info.btn-rounded for="type-found" data-mdb-ripple-init="" Found
+  .col-md-8
     .row.text-end.d-flex.justify-content-end
       .w-25
         select multiple="multiple" name="tag-filter" id="tag-filter" data-placeholder="Filter by tags"
@@ -17,7 +22,7 @@
 
 div class="row"
   - items.all.each_with_index do |item, item_idx|
-    div class="col-12 col-md-4 mb-2 item-card" data-tags="#{item.tags.map(&:id).join(',')}" data-item-id="#{item.id}" data-item-type="#{item.type}"
+    div class="col-12 col-md-4 mb-2 item-card" data-tags="#{item.tags.map(&:id).join(',')}" data-id="#{item.id}" data-type="#{item.type}"
       a href="/items/#{item.id}"
         div class="card ripple bg-light" data-mdb-ripple-color="light"
           div class="bg-image hover-overlay"

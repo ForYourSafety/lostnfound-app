@@ -17,7 +17,7 @@ window.onload = () => {
     tagSelect = new MultiSelect(tagSelectElem, {
         placeholder: 'Filter by tags',
         onChange: function(value, text, element) {
-            updateTagFilter();
+            updateFilters();
         }
     });
 
@@ -30,36 +30,84 @@ window.onload = () => {
     inputInstance.update();
 
     searchInput.addEventListener('input', function() {
-        updateSearchFilter();
+        updateFilters();
     });
 
-    updateTagFilter();
-    updateSearchFilter();
+    // Radio buttons: type-lost and type-found
+    typeLost = document.getElementById('type-lost');
+    typeFound = document.getElementById('type-found');
+
+    typeFilter = urlParams.get('type') || 'found';
+    updateTypeStyle();
+
+    typeLost.addEventListener('change', function() {
+        if (typeLost.checked) {
+            typeFilter = 'lost';
+            updateTypeStyle();
+            updateFilters();
+        }
+    });
+
+    typeFound.addEventListener('change', function() {
+        if (typeFound.checked) {
+            typeFilter = 'found';
+            updateTypeStyle();
+            updateFilters();
+        }
+    });
+
+    updateFilters();
 }
 
-function updateSearchFilter() {
-    updateUrl();
+function updateTypeStyle() {
+    if (typeFilter === 'lost') {
+        typeLost.checked = true;
+        typeFound.checked = false;
+    } else {
+        typeLost.checked = false;
+        typeFound.checked = true;
+    }
 
+    const typeLostLabel = typeLost.nextElementSibling;
+    const typeFoundLabel = typeFound.nextElementSibling;
+
+    typeLostLabel.classList.toggle('btn-warning', typeFilter === 'lost');
+    typeLostLabel.classList.toggle('btn-outline-warning', typeFilter !== 'lost');
+    typeFoundLabel.classList.toggle('btn-info', typeFilter === 'found');
+    typeFoundLabel.classList.toggle('btn-outline-info', typeFilter !== 'found');
+}
+
+function searchVisible(item) {
     const searchValue = searchInput.value.toLowerCase();
-
-    const items = document.querySelectorAll('.item-card');
-    items.forEach(item => {
-        const itemText = item.innerText.toLowerCase();
-        const isVisible = itemText.includes(searchValue);
-        item.style.display = isVisible ? 'block' : 'none';
-    });
+    const itemText = item.innerText.toLowerCase();
+    return itemText.includes(searchValue);
 }
 
-function updateTagFilter() {
-    updateUrl();
-
+function tagVisible(item) {
     const selectedTags = tagSelect.selectedValues;
+    const itemTags = item.dataset.tags.split(',');
+    return selectedTags.length === 0 || itemTags.some(tag => selectedTags.includes(tag));
+}
+
+function typeVisible(item) {
+    const itemType = item.dataset.type;
+    return itemType === typeFilter;
+}
+
+function updateFilters() {
+    updateUrl();
 
     const items = document.querySelectorAll('.item-card');
     items.forEach(item => {
-        const itemTags = item.dataset.tags.split(',');
-        const isVisible = selectedTags.length === 0 || itemTags.some(tag => selectedTags.includes(tag));
-        item.style.display = isVisible ? 'block' : 'none';
+        const isSearchVisible = searchVisible(item);
+        const isTagVisible = tagVisible(item);
+        const isTypeVisible = typeVisible(item);
+
+        if (isSearchVisible && isTagVisible && isTypeVisible) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
     });
 }
 
@@ -69,6 +117,9 @@ function updateUrl() {
     const searchValue = searchInput.value.trim();
 
     const urlParams = new URLSearchParams();
+
+    // Add the type filter to the URL parameters
+    urlParams.set('type', typeFilter);
 
     // Update the search parameter
     if (searchValue) {
