@@ -6,7 +6,7 @@
         span.badge.rounded-pill.badge-light role="button" id="type-lost" data-mdb-ripple-init="" Lost
         span.badge.rounded-pill.badge-light.ms-1 role="button" id="type-found" data-mdb-ripple-init="" Found
   .col-md-8
-    .d-flex.justify-content-end
+    .d-flex.justify-content-end.align-items-center
       .w-25
         select multiple="multiple" name="tag-filter" id="tag-filter" data-placeholder="Filter by tags"
           - colors = ["badge-primary", "badge-secondary", "badge-success", "badge-danger", "badge-warning", "badge-info", "badge-light", "badge-dark"]
@@ -14,10 +14,14 @@
             option value="#{tag.id}"
               - hash = tag.description.hash % colors.length
               span class="badge rounded-pill #{colors[hash]} ms-1"= tag.name
-      .form-outline.w-25.ms-3 data-mdb-input-init=""
+      .form-outline.w-25.ms-2 data-mdb-input-init=""
         input.form-control type="search" aria-label="Search" aria-describedby="search-addon" id="search_input"
         label.form-label for="search_input" Search
         i.fas.fa-search style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"
+      - if current_user.logged_in?
+        button.btn.btn-primary.ms-3 data-mdb-ripple-init="" id="new-item-button"
+          i.fas.fa-plus.me-md-2
+          | Post an Item
 
 div class="row mt-3"
   - items.all.each_with_index do |item, item_idx|

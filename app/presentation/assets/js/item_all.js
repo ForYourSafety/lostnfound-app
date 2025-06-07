@@ -53,6 +53,12 @@ window.onload = () => {
     });
 
     updateFilters();
+
+    // Add event listener for new item button
+    const newItemButton = document.getElementById('new-item-button');
+    newItemButton.addEventListener('click', function() {
+        window.location.href = '/items/new?type=' + typeFilter;
+    });
 }
 
 function updateTypeStyle() {
