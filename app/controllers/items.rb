@@ -7,6 +7,21 @@ module LostNFound
   class App < Roda
     route('items') do |routing|
       routing.on do
+        # Get /items/new
+        routing.on 'new' do
+          unless @current_account.logged_in?
+            flash[:error] = 'You must be logged in to create a new item.'
+            routing.redirect '/auth/login'
+            return
+          end
+
+          all_tags_data = GetAllTags.new(App.config).call(@current_account)
+          all_tags = Tags.new(all_tags_data)
+
+          view :item_new,
+               locals: { current_user: @current_account, all_tags: }
+        end
+
         # Get /items/:item_id
         routing.get String do |item_id|
           item_json = GetItem.new(App.config).call(
