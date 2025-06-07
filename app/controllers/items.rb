@@ -7,7 +7,6 @@ module LostNFound
   class App < Roda
     route('items') do |routing|
       routing.on do
-        # Get /items/new
         routing.on 'new' do
           unless @current_account.logged_in?
             flash[:error] = 'You must be logged in to create a new item.'
@@ -15,14 +14,27 @@ module LostNFound
             return
           end
 
-          all_tags_data = GetAllTags.new(App.config).call(@current_account)
-          all_tags = Tags.new(all_tags_data)
+          # GET /items/new
+          routing.get do
+            all_tags_data = GetAllTags.new(App.config).call(@current_account)
+            all_tags = Tags.new(all_tags_data)
 
-          view :item_new,
-               locals: { current_user: @current_account, all_tags: }
+            view :item_new,
+                 locals: { current_user: @current_account, all_tags: }
+          end
+
+          # POST /items/new
+          routing.post do
+            puts "Received params: #{routing.params.inspect}"
+
+            flash[:success] = 'Item created successfully.'
+            response.status = 201
+            response['Location'] = '/items/xxx'
+            { message: 'Item saved' }.to_json
+          end
         end
 
-        # Get /items/:item_id
+        # GET /items/:item_id
         routing.get String do |item_id|
           item_json = GetItem.new(App.config).call(
             current_account: @current_account,

@@ -48,7 +48,7 @@ module LostNFound
         preserve_schemes: true,
         default_src: %w['self'],
         child_src: %w['self' blob:],
-        connect_src: %w[wws:],
+        connect_src: %w[wws: 'self'],
         img_src: %w['self' data: blob:] + IMG_SRC,
         font_src: %w['self'] + FONT_SRC,
         script_src: %w['self'] + SCRIPT_SRC,

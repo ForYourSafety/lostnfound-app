@@ -168,12 +168,30 @@ function submitForm() {
         return { type, value };
     });
 
-    console.log('Item Name:', itemName);
-    console.log('Item Description:', itemDescription);
-    console.log('Item Tags:', itemTags);
-    console.log('Item Type:', itemType);
-    console.log('Item Contacts:', contacts);
-    console.log('Challenge Question:', challengeQuestion);
-    console.log('Images:', images);
-    
+    // Create the form data
+    const formData = new FormData();
+    formData.append('name', itemName);
+    formData.append('description', itemDescription);
+    formData.append('challenge_question', challengeQuestion);
+    formData.append('type', itemType);
+    formData.append('tags', JSON.stringify(itemTags));
+    images.forEach((image, index) => {
+        formData.append('images[]', image);
+    });
+    contacts.forEach((contact, index) => {
+        formData.append('contacts[]', JSON.stringify(contact));
+    });
+
+    // Send the form data
+    fetch('/items/new', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            // Handle success
+        } else {
+            // Handle error
+        }
+    });
 }
