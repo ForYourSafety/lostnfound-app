@@ -11,6 +11,7 @@ module LostNFound
     def initialize(item_info)
       process_attributes(item_info['attributes'])
       process_relationships(item_info['relationships'])
+      process_policies(item_info['policies'])
     end
 
     private
@@ -32,7 +33,6 @@ module LostNFound
     def process_relationships(relationships)
       return unless relationships
 
-      @created_by = Account.new(relationships['created_by'])
       @tags     = process_tags(relationships['tags'])
       @contacts = process_contacts(relationships['contacts'])
     end

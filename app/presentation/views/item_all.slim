@@ -25,13 +25,15 @@ div class="row"
             - item_type_class = item.type == "lost" ? "badge-danger" : "badge-success"
             h5
               span class="badge rounded-pill #{item_type_class}" #{item.type.capitalize}
+              - if item.created_by == current_user.id
+                span class="badge rounded-pill badge-info ms-1" Posted by you
             h4 class="card-title"
               | #{item.name}
               - if item.tags
                 span style="float: right;"
                   - colors = ["badge-primary", "badge-secondary", "badge-success", "badge-danger", "badge-warning", "badge-info", "badge-light", "badge-dark"]
                   - item.tags.each do |tag|
-                    - hash = tag.name.hash % colors.length
+                    - hash = tag.description.hash % colors.length
                     span class="badge rounded-pill #{colors[hash]} ms-1" style="font-size: 0.5em;"= tag.name
           div class="card-body"
             h6 class="card-subtitle mb-2 text-muted" Description

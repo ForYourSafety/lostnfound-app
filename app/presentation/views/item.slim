@@ -6,16 +6,21 @@ div class="container"
           | #{item.name}
           - item_type_class = item.type == "lost" ? "badge-danger" : "badge-success"
           span class="badge rounded-pill #{item_type_class} ms-3" style="font-size: 0.6em;" #{item.type.capitalize}
+          - if item.created_by == current_user.id
+            span class="badge rounded-pill badge-info ms-1" style="font-size: 0.6em;" Posted by you
       div class="col-md-6 text-end"
-        button.btn.btn-danger.ms-2.mt-2
-          i.fas.fa-trash-alt.me-md-2
-          |  Delete
-        button.btn.btn-warning.ms-2.mt-2
-          i.fas.fa-edit.me-md-2
-          |  Edit
-        button.btn.btn-success.ms-2.mt-2
-          i.fas.fa-check.me-md-2
-          |  Resolve
+        - if item.policies.can_delete
+          button.btn.btn-danger.ms-2.mt-2 data-mdb-ripple-init=""
+            i.fas.fa-trash-alt.me-md-2
+            |  Delete
+        - if item.policies.can_edit
+          button.btn.btn-warning.ms-2.mt-2 data-mdb-ripple-init=""
+            i.fas.fa-edit.me-md-2
+            |  Edit
+        - if item.policies.can_resolve
+          button.btn.btn-success.ms-2.mt-2 data-mdb-ripple-init=""
+            i.fas.fa-check.me-md-2
+            |  Resolve
   hr
   div class="row"
     div class="col-md-4"
@@ -37,21 +42,66 @@ div class="container"
           h5 Tags
           div
             - colors = ["badge-primary", "badge-secondary", "badge-success", "badge-danger", "badge-warning", "badge-info", "badge-light", "badge-dark"]
-            - item.tags.each do |tag|
-              - hash = tag.name.hash % colors.length
-                span class="badge rounded-pill #{colors[hash]} ms-1" style="font-size: 0.5em;"= tag.name
-      hr
-      div class="row"
-        div class="col-md-12"
-          h5 Is this item yours?
-          p
-            | You can request the contact information of the person who posted this item by leaving a message!
-            br
-            | The requester has a challenge question. You should include your answer to this question in your message:
-            br
-            strong #{item.challenge_question}
-          div class="form-outline" data-mdb-input-init=""
-            textarea.form-control id="request_message" rows="4"
-            label.form-label for="request_message" Message
-          div class="text-end my-3"
-            button.btn.btn-info Request Contact
+            - if item.tags && item.tags.any?
+              - item.tags.each do |tag|
+                - hash = tag.description.hash % colors.length
+                div
+                  span class="badge rounded-pill #{colors[hash]} mt-1"= tag.name
+          - if item.policies.can_view_contacts
+            div.my-3
+              h5 Contact Information
+              - item.contacts.each do |contact|
+                strong #{contact.contact_type.capitalize}:
+                |  #{contact.value}
+                br
+        div class="row"
+          hr
+          - if item.created_by == current_user.id
+            div class="col-md-12"
+              h5
+                | This item is posted by you!
+              p
+                | Check if someone has requested your contact information.
+              div class="text-end my-3"
+                button.btn.btn-secondary data-mdb-ripple-init=""
+                  i.fas.fa-list.me-md-2
+                  | Requests to me
+          - else
+            div class="col-md-12"
+              h5
+                - if item.type == "lost"
+                  | Have you found this item?
+                - else
+                  | Is this your item?
+              - if item.policies.can_request
+                p
+                  | You can request the contact information of the person who posted this item by leaving a message!
+                  - if item.challenge_question
+                    br
+                    | The requester has a challenge question. You should include your answer to this question in your message:
+                    br
+                    strong #{item.challenge_question}
+                div class="form-outline" data-mdb-input-init=""
+                  textarea.form-control id="request_message" rows="4"
+                  label.form-label for="request_message" Message
+                div class="text-end my-3"
+                  button.btn.btn-secondary data-mdb-ripple-init=""
+                    i.fas.fa-list.me-md-2
+                    | My Requests
+                  button.btn.btn-info.ms-2 data-mdb-ripple-init=""
+                    i.fas.fa-envelope.me-md-2
+                    | Request Contact
+              - else
+                - if current_user.logged_out?
+                  p
+                    a href="/auth/login" Login
+                    |  or 
+                    a href="/auth/register" Register
+                    |  to request the contact information of the person who posted this item!
+                - if item.policies.can_view_contacts
+                  p
+                    | Your request has been approved! Go ahead and contact the person who posted this item with the contact information above!
+                  div class="text-end my-3"
+                    button.btn.btn-secondary data-mdb-ripple-init=""
+                      i.fas.fa-list.me-md-2
+                      | My Requests
