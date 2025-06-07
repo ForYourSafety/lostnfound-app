@@ -1,0 +1,57 @@
+div class="container"
+  div class="row"
+    div class="row"
+      div class="col-md-6"
+        h2
+          | #{item.name}
+          - item_type_class = item.type == "lost" ? "badge-danger" : "badge-success"
+          span class="badge rounded-pill #{item_type_class} ms-3" style="font-size: 0.6em;" #{item.type.capitalize}
+      div class="col-md-6 text-end"
+        button.btn.btn-danger.ms-2.mt-2
+          i.fas.fa-trash-alt.me-md-2
+          |  Delete
+        button.btn.btn-warning.ms-2.mt-2
+          i.fas.fa-edit.me-md-2
+          |  Edit
+        button.btn.btn-success.ms-2.mt-2
+          i.fas.fa-check.me-md-2
+          |  Resolve
+  hr
+  div class="row"
+    div class="col-md-4"
+      - if item.image_urls.any?
+        - item.image_urls.each_with_index do |image_url, index|
+          a href="#{image_url}" target="_blank"
+            img src="#{image_url}" class="img-fluid rounded mb-3" alt="Item Image #{index + 1}" style="width: 100%;"
+      - else
+        h5.text-center.pt-3 No image available
+    div class="col-md-8"
+      div class="row"
+        div class="col-md-6"
+          h5 Description
+          p #{item.description}
+
+          h5 Location
+          p #{item.location}
+        div class="col-md-6"
+          h5 Tags
+          div
+            - colors = ["badge-primary", "badge-secondary", "badge-success", "badge-danger", "badge-warning", "badge-info", "badge-light", "badge-dark"]
+            - item.tags.each do |tag|
+              - hash = tag.name.hash % colors.length
+                span class="badge rounded-pill #{colors[hash]} ms-1" style="font-size: 0.5em;"= tag.name
+      hr
+      div class="row"
+        div class="col-md-12"
+          h5 Is this item yours?
+          p
+            | You can request the contact information of the person who posted this item by leaving a message!
+            br
+            | The requester has a challenge question. You should include your answer to this question in your message:
+            br
+            strong #{item.challenge_question}
+          div class="form-outline" data-mdb-input-init=""
+            textarea.form-control id="request_message" rows="4"
+            label.form-label for="request_message" Message
+          div class="text-end my-3"
+            button.btn.btn-info Request Contact

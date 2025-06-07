@@ -5,8 +5,8 @@ require 'ostruct'
 module LostNFound
   # Behaviors of an item entity
   class Item
-    attr_reader :id, :type, :name, :description, :location, :person_info,
-                :resolved, :created_by, :contacts, :tags, :policies
+    attr_reader :id, :type, :name, :description, :location, :image_keys, :image_urls,
+                :resolved, :challenge_question, :created_by, :contacts, :tags, :policies
 
     def initialize(item_info)
       process_attributes(item_info['attributes'])
@@ -15,15 +15,18 @@ module LostNFound
 
     private
 
-    def process_attributes(attributes)
+    def process_attributes(attributes) # rubocop:disable Metrics/AbcSize
       @id           = attributes['id']
-      @type         = attributes['type'] # 0: lost, 1: found
+      @type         = attributes['type']
       @name         = attributes['name']
       @description  = attributes['description']
       @location     = attributes['location']
-      @person_info  = attributes['person_info']
       @resolved     = attributes['resolved']
       @created_by   = attributes['created_by']
+      @challenge_question = attributes['challenge_question']
+
+      @image_keys = attributes['image_keys']
+      @image_urls = @image_keys.nil? ? [] : @image_keys.split(',').map { |key| "#{App.config.IMAGE_BASE_URL}/#{key}" }
     end
 
     def process_relationships(relationships)

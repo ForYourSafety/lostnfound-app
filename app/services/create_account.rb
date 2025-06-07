@@ -7,7 +7,7 @@ module LostNFound
   class CreateAccount
     # Error for accounts that cannot be created
     class InvalidAccount < StandardError
-      def message = 'This account can no longer be created: please start again' 
+      def message = 'This account can no longer be created: please start again'
     end
 
     def initialize(config)

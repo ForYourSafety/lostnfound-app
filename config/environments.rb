@@ -23,6 +23,10 @@ module LostNFound
     Figaro.load
     def self.config = Figaro.env
 
+    # Secure session configuration
+    ONE_MONTH = 30 * 24 * 60 * 60
+    SecureMessage.setup(ENV.delete('MSG_KEY'))
+
     # HTTP Request logging
     configure :development, :production do
       plugin :common_logger, $stdout
@@ -35,19 +39,12 @@ module LostNFound
     # Allows binding.pry in dev/test and rake console in production
     require 'pry'
 
-    # Secure session configuration
-    ONE_MONTH = 30 * 24 * 60 * 60
-    @redis_url = ENV.delete('REDISCLOUD_URL')
-    SecureMessage.setup(ENV.delete('MSG_KEY'))
-    SecureSession.setup(@redis_url)
-
     # Console/Pry configuration
     configure :development, :test do
-      # Suppresses log info/warning outputs in dev/test environments
-      logger.level = Logger::ERROR
+      logger.level = Logger::INFO
 
       # NOTE: env var REDIS_URL only used to wipe the session store (ok to be nil)
-      SecureSession.setup(ENV.fetch('REDIS_URL', nil)) # REDIS_URL used again below
+      SecureSession.setup(ENV.fetch('REDIS_URL', nil))
 
       # use Rack::Session::Cookie,
       #     expire_after: ONE_MONTH, secret: config.SESSION_SECRET
@@ -62,7 +59,7 @@ module LostNFound
       # Allows running reload! in pry to restart entire app
       def self.reload! = exec 'pry -r ./spec/test_load_all'
     end
-    
+
     configure :production do
       use Rack::SslEnforcer, hsts: true
 

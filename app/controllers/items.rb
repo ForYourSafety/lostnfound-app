@@ -7,18 +7,29 @@ module LostNFound
   class App < Roda
     route('items') do |routing|
       routing.on do
+        # Get /items/:item_id
+        routing.get String do |item_id|
+          item_json = GetItem.new(App.config).call(
+            current_account: @current_account,
+            item_id: item_id
+          )
+
+          routing.halt(404) if item_json.nil?
+
+          item = Item.new(item_json)
+
+          view :item,
+               locals: { current_user: @current_account, item: item }
+        end
+
         # GET /items/
         routing.get do
-          if @current_account.logged_in?
-            item_list = GetAllItems.new(App.config).call(@current_account)
+          item_list = GetAllItems.new(App.config).call(@current_account)
 
-            items = Items.new(item_list)
+          items = Items.new(item_list)
 
-            view :item_all,
-                 locals: { current_user: @current_account, items: }
-          else
-            routing.redirect '/auth/login'
-          end
+          view :item_all,
+               locals: { current_user: @current_account, items: }
         end
       end
     end
