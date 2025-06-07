@@ -7,7 +7,15 @@ module LostNFound
   # Base class for LostNFound Web Application
   class App < Roda
     plugin :render, engine: 'slim', views: 'app/presentation/views'
-    plugin :assets, css: 'style.css', path: 'app/presentation/assets'
+    plugin :assets, path: 'app/presentation/assets', group_subdirs: false,
+                    css: {
+                      style: 'style.css',
+                      multiselect: 'MultiSelect.css'
+                    },
+                    js: {
+                      item_all: 'item_all.js',
+                      multiselect: 'MultiSelect.js'
+                    }
     plugin :public, root: 'app/presentation/public'
     plugin :multi_route
     plugin :flash

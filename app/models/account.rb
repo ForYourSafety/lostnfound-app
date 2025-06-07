@@ -18,6 +18,10 @@ module LostNFound
       @account_info ? @account_info['attributes']['email'] : nil
     end
 
+    def id
+      @account_info ? @account_info['attributes']['id'] : nil
+    end
+
     def logged_out?
       @account_info.nil?
     end

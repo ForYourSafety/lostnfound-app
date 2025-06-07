@@ -15,7 +15,7 @@ module LostNFound
 
       response = request.get("#{@config.API_URL}/items")
 
-      response.code == 200 ? JSON.parse(response.to_s)['data'] : nil
+      response.code == 200 ? JSON.parse(response.to_s) : nil
     end
   end
 end

@@ -10,19 +10,15 @@ module LostNFound
 
     def initialize(info)
       process_attributes(info['attributes'])
-      process_included(info['include'])
     end
 
     private
 
     def process_attributes(attributes)
-      @id           = attributes['id']
+      @id = attributes['id']
+      @item_id = attributes['item_id']
       @contact_type = attributes['contact_type']
       @value        = attributes['value']
-    end
-
-    def process_included(included)
-      @item = Item.new(included['item'])
     end
   end
 end

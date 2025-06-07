@@ -13,7 +13,8 @@ html
     / MDB
     link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.0.0/css/mdb.min.css" integrity="sha384-hkUK27o2PHgtvGYpTD8vN2jQ7c1E1EF9woYE+SNSnS1g5+7x22cvGcMJ1KMY9ybE" crossorigin="anonymous"
     / Custom CSS
-    == assets(:css)
+    == assets([:css, :style])
+    == assets([:css, :multiselect])
   body
 
     == render :nav
