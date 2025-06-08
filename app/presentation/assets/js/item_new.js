@@ -172,7 +172,7 @@ function submitForm() {
     });
 
     // yyyy/MM/dd hh:mm AA
-    const timestamp = new Date(itemTime).getTime();
+    const timestamp = new Date(itemTime).getTime() / 1000; // Convert to seconds since epoch
 
     // Create the form data
     const formData = new FormData();
