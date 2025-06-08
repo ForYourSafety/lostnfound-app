@@ -1,5 +1,5 @@
 div class="container"
-  form.needs-validation id="item-form" novalidate=""
+  form.needs-validation id="item-form"
     div class="row"
       div class="row"
         div class="col-md-6 d-flex align-items-center"
@@ -34,6 +34,9 @@ div class="container"
               input.form-control type="text" id="item-location"
               label.form-label for="item-location"
                 | Location (i.e. where it was lost/found)
+            
+            h5.mt-3 if="time-title" Time
+            input.form-control id="item-time" placeholder="Time (i.e. approximately when it was lost/found)"
           div class="col-md-6"
             h5 Tags
             div

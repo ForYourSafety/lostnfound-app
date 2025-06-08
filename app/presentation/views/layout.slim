@@ -15,14 +15,16 @@ html
     / Filepond
     link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview@4.6.12/dist/filepond-plugin-image-preview.css" integrity="sha384-c3/GpWYyGfcNYzyfwNiI+1Nhv+gngJct6I61K1sHIxbGlOwXt+4wtfztJqM1l16+" crossorigin="anonymous"
     link rel="stylesheet" href="https://unpkg.com/filepond@4.32.7/dist/filepond.css" integrity="sha384-m7wI7JcCTz08dUytJVT19xEUDJC9T9U068OeVUi6VbqfVSrKEFbcRvmdnXVTWKNa" crossorigin="anonymous"
-    
+    / Air datepicker
+    link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/air-datepicker@3.6.0/air-datepicker.min.css" integrity="sha384-d4rm1Vq4S8ia/qV6cnOjQWhtzXDthbw4GPIBh3X5OTtkqAWF/A5jKsSCbmFvHqys" crossorigin="anonymous"
+
     / Custom CSS
     == assets([:css, :style])
     == assets([:css, :multiselect])
   body
 
     == render :nav
-    div class='container mt-5' id='html_body'
+    div class='container my-5' id='html_body'
       section
         == render :flash_bar
         == yield
@@ -31,5 +33,6 @@ html
     script src="https://unpkg.com/filepond-plugin-image-preview@4.6.12/dist/filepond-plugin-image-preview.js" integrity="sha384-x/QUpzs8EEiftYiWECGMknKvMqBinuiuILcZYNNCMsAsi1z5jC1xJv3uLbaS+TAU" crossorigin="anonymous"
     script src="https://unpkg.com/filepond-plugin-file-validate-type@1.2.9/dist/filepond-plugin-file-validate-type.js" integrity="sha384-5yYMRHh3VLbXD0faUjJxaUpOk+7eoFvy8s1nJrhKgomxmm3fdFJk0k+MJEgAOKYx" crossorigin="anonymous"
     script src="https://unpkg.com/filepond@4.32.7/dist/filepond.js" integrity="sha384-Z2nQg2bJcFK0DRBDeBghv6Paw8/dAiGYjjqeGVfRRZ3hg0bHv1SIJ22I2nVucSSB" crossorigin="anonymous"
+    script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.6.0/air-datepicker.min.js" integrity="sha384-KgAAl45Yi0raEeZJlL7ZsR8EIoMixuB1ShXpgG8bWK2WNEYd5O/N6P3g0FspMRJT" crossorigin="anonymous"
     == assets([:js, :multiselect])
     
