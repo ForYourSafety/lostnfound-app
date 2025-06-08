@@ -77,6 +77,30 @@ module LostNFound
             end
           end
 
+          routing.on 'resolve' do
+            # POST /items/:item_id/resolve
+            routing.post do
+              unless @current_account.logged_in?
+                flash[:error] = 'You must be logged in to resolve an item.'
+                routing.redirect '/auth/login'
+              end
+
+              result = ResolveItem.new(App.config).call(
+                current_account: @current_account,
+                item_id: item_id
+              )
+
+              unless result
+                response.status = 400
+                flash[:error] = 'Item could not be resolved.'
+                routing.redirect "/items/#{item_id}"
+              end
+
+              flash[:notice] = 'Item resolved.'
+              routing.redirect "/items/#{item_id}"
+            end
+          end
+
           routing.on 'requests' do
             unless @current_account.logged_in?
               flash[:error] = 'You must be logged in to access the requests of an item.'
