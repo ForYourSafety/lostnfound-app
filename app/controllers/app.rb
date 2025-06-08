@@ -16,6 +16,7 @@ module LostNFound
                       item: 'item.js',
                       item_all: 'item_all.js',
                       item_new: 'item_new.js',
+                      request_list: 'request_list.js',
                       multiselect: 'MultiSelect.js'
                     }
     plugin :public, root: 'app/presentation/public'
