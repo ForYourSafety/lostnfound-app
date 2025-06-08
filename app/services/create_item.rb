@@ -38,10 +38,6 @@ module LostNFound
         'images[]': images
       }
 
-      logger = Logger.new($stdout)
-      logger.level = Logger::DEBUG
-      request = request.use(logging: { logger: logger })
-
       response = request.post("#{@config.API_URL}/items", form: form)
 
       response.code == 201 ? JSON.parse(response.to_s)['data'] : nil
