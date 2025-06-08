@@ -1,31 +1,70 @@
 .row
-  .col-md-4
-    .d-flex.align-items-center
-      h1 Contact Requests
   .col-md-8
+    .d-flex.align-items-center
+      h1 Requests
+      h3.ms-3.d-flex
+        span.badge.rounded-pill.badge-light role="button" id="type-lost" data-mdb-ripple-init="" Unanswered
+        span.badge.rounded-pill.badge-light.ms-1 role="button" id="type-found" data-mdb-ripple-init="" Approved
+        span.badge.rounded-pill.badge-light.ms-1 role="button" id="type-accepted" data-mdb-ripple-init="" Declined
+  .col-md-4
     .d-flex.justify-content-end.align-items-center
-      .form-outline.w-25.ms-2 data-mdb-input-init=""
+      .form-outline.ms-2 data-mdb-input-init=""
         input.form-control type="search" aria-label="Search" aria-describedby="search-addon" id="search_input"
         label.form-label for="search_input" Search
         i.fas.fa-search style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"
 
+- if for_item
+  .row.my-3
+    h4 Contact requests for item #{for_item.name}
+    - if for_item.challenge_question
+      h4
+        | Challenge Question: 
+        strong 
+          | #{for_item.challenge_question}
+
 div class="row mt-3"
   - requests.all.each_with_index do |request, request_idx|
-    div class="col-12 col-md-6 mb-2 request-card" data-id="#{request.id}"
-      a href="/requests/#{request.id}"
+    - if request.policies.can_view
+      div class="col-12 mb-2 request-card" data-id="#{request.id}"
         div class="card ripple bg-light" data-mdb-ripple-color="light"
           div class="bg-image hover-overlay"
           div class="card-header"
-            h5
+              
+            h4 class="card-title"
+              - if !for_item
+                | Item: #{request.item.name}
+              - if request.status == "unanswered"
+                span class="badge rounded-pill badge-light" Unanswered
+              - elsif request.status == "approved"
+                span class="badge rounded-pill badge-success" Approved
+              - elsif request.status == "declined"
+                span class="badge rounded-pill badge-danger" Declined
+
               - if request.requester_id == current_user.id
                 span class="badge rounded-pill badge-info ms-1" You Requested
-            h4 class="card-title"
-              | Item: #{request.item.name}
+              - if request.item.resolved == 1
+                span class="badge rounded-pill badge-warning ms-1" Item Resolved
+              
+              div style="float: right;"
+                - if request.policies.can_delete
+                  form action="/requests/#{request.id}/delete" method="post" class="d-inline" id="delete-form"
+                    button.btn.btn-danger.ms-2.mt-1 data-mdb-ripple-init="" data-item-id="#{request.id}"
+                      i.fas.fa-trash-alt.me-md-2
+                      |  Delete
+                - if request.policies.can_reply
+                  form action="/requests/#{request.id}/approve" method="post" class="d-inline" id="approve-form"
+                    button.btn.btn-success.ms-2.mt-1 data-mdb-ripple-init="" data-item-id="#{request.id}"
+                      i.fas.fa-check.me-md-2
+                      |  Approve
+                  form action="/requests/#{request.id}/decline" method="post" class="d-inline" id="decline-form"
+                    button.btn.btn-danger.ms-2.mt-1 data-mdb-ripple-init="" data-item-id="#{request.id}"
+                      i.fas.fa-times.me-md-2
+                      |  Decline
           div class="card-body"
-            - if request.item.challenge_question
+            - if !for_item && request.item.challenge_question
               h6 class="card-subtitle mb-2 text-muted" Challenge Question
               p class="card-text" #{request.item.challenge_question}
             h6 class="card-subtitle mb-2 text-muted" Message
             p class="card-text" #{request.message}
 
-/ == assets([:js, :item_all])
+  / == assets([:js, :item_all])
