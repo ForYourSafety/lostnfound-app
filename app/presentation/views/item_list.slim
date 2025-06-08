@@ -59,6 +59,8 @@ div class="row mt-3"
               span class="badge rounded-pill #{item_type_class}" #{item.type.capitalize}
               - if !mine && item.created_by == current_user.id
                 span class="badge rounded-pill badge-info ms-1" Posted by you
+              - if item.resolved == 1
+                span class="badge rounded-pill badge-warning ms-1" Resolved
             h4 class="card-title"
               | #{item.name}
               - if item.tags
