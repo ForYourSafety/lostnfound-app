@@ -1,7 +1,7 @@
 div class="container"
   div class="row"
     div class="row"
-      div class="col-md-6 d-flex align-items-center"
+      div class="col-md-8 d-flex align-items-center"
         h1
           | #{item.name}
           - item_type_class = item.type == "lost" ? "badge-danger" : "badge-success"
@@ -11,7 +11,7 @@ div class="container"
             span class="badge rounded-pill badge-info ms-1" style="font-size: 0.6em;" Posted by you
           - if item.resolved == 1
             span class="badge rounded-pill badge-warning ms-1" style="font-size: 0.6em;" Resolved
-      div class="col-md-6 text-end"
+      div class="col-md-4 text-end"
         - if item.policies.can_delete
           form action="/items/#{item.id}/delete" method="post" class="d-inline" id="delete-form"
             button.btn.btn-danger data-mdb-ripple-init="" data-item-id="#{item.id}"
