@@ -121,7 +121,12 @@ module LostNFound
 
               requests = Requests.new(requests_data)
 
-              for_item = requests.all[0].item if requests.all.any?
+              if requests.all.empty?
+                flash[:notice] = 'There are no requests to this item yet.'
+                routing.redirect "/items/#{item_id}"
+              end
+
+              for_item = requests.all[0].item
 
               view :request_list,
                    locals: { current_user: @current_account, requests:, for_item:, to_me: false }

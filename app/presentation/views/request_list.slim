@@ -16,7 +16,7 @@
 .row.my-3
 - if for_item
     h4 Contact requests for item: #{for_item.name}
-    a.btn.btn-info.ms-2.mt-1 href="/items/#{request.item.id}" data-mdb-ripple-init=""
+    a.btn.btn-info.ms-2.mt-1 href="/items/#{for_item.id}" data-mdb-ripple-init=""
       i.fas.fa-external-link.me-md-2
       |  Go to Item
     - if for_item.challenge_question
