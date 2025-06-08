@@ -29,14 +29,15 @@ module LostNFound
         contacts: contacts
       }
 
-      images = item_params[:images].map do |image|
-        HTTP::FormData::File.new(image[:tempfile])
-      end
-
       form = {
-        data: item_data.to_json,
-        'images[]': images
+        data: item_data.to_json
       }
+
+      if !item_params[:images].nil? && item_params[:images].any?
+        form[:'images[]'] = item_params[:images].map do |image|
+          HTTP::FormData::File.new(image[:tempfile], filename: image[:filename])
+        end
+      end
 
       response = request.post("#{@config.API_URL}/items", form: form)
 

@@ -40,6 +40,11 @@ module LostNFound
               item_params: item_form.to_h
             )
 
+            if item_data.nil?
+              response.status = 400
+              return { message: 'Item could not be created.' }.to_json
+            end
+
             flash[:success] = 'Item created successfully.'
             response.status = 201
             response['Location'] = "/items/#{item_data['attributes']['id']}"
