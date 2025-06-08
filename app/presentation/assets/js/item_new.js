@@ -158,6 +158,7 @@ function submitForm() {
     // Get field values
     const itemName = document.getElementById('item-name').value;
     const itemDescription = document.getElementById('item-description').value;
+    const itemLocation = document.getElementById('item-location').value;
     const challengeQuestion = document.getElementById('challenge-question').value;
     const itemTags = tagSelect.selectedValues;
     const images = imageFileUpload.getFiles().map(file => file.file);
@@ -172,14 +173,19 @@ function submitForm() {
     const formData = new FormData();
     formData.append('name', itemName);
     formData.append('description', itemDescription);
+    formData.append('location', itemLocation);
     formData.append('challenge_question', challengeQuestion);
     formData.append('type', itemType);
-    formData.append('tags', JSON.stringify(itemTags));
+
+    itemTags.forEach((tag, index) => {
+        formData.append('tags[]', tag);
+    });
     images.forEach((image, index) => {
         formData.append('images[]', image);
     });
     contacts.forEach((contact, index) => {
-        formData.append('contacts[]', JSON.stringify(contact));
+        formData.append('contact_type[]', contact.type);
+        formData.append('contact_value[]', contact.value);
     });
 
     // Send the form data

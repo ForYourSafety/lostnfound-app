@@ -9,16 +9,42 @@ module LostNFound
       config.messages.load_paths << File.join(__dir__, 'errors/new_item.yml')
 
       params do
-        required(:type).filled(:integer)
+        required(:type).filled(:string)
         required(:name).filled(:string)
         optional(:description).maybe(:string)
         optional(:location).maybe(:string)
-        optional(:person_info).maybe(:string)
+        optional(:challenge_question).maybe(:string)
+        optional(:tags).maybe(:array)
+        optional(:contact_type).maybe(:array)
+        optional(:contact_value).maybe(:array)
+        optional(:images).maybe(:array)
       end
 
       rule(:type) do
-        allowed_types = [0, 1] # 0: lost, 1: found
+        allowed_types = %w[lost found]
         key.failure(:type_valid?) unless allowed_types.include?(value)
+      end
+
+      rule(:tags) do
+        next if value.nil? || value.empty?
+
+        key.failure(:tags_valid?) unless value.all? do |tag|
+          tag.is_a?(String) && !tag.strip.empty? && tag.to_i.to_s == tag.strip
+        end
+      end
+
+      rule(:contact_type) do
+        next if value.nil? || value.empty?
+
+        allowed_types = %w[email phone address facebook twitter instagram whatsapp telegram line signal wechat discord
+                           other]
+        key.failure(:contact_type_valid?) unless value.all? { |type| allowed_types.include?(type) }
+      end
+
+      rule(:contact_value) do
+        next if value.nil? || value.empty?
+
+        key.failure(:contact_value_valid?) unless value.all? { |val| val.is_a?(String) && !val.strip.empty? }
       end
     end
   end

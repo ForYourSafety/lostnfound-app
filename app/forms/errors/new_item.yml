@@ -1,8 +1,15 @@
 en:
-  errors:
-    type: 'please select whether the item is lost or found'
-    type_valid?: 'invalid item type (must be lost or found)'
-    name: 'please provide a name for the item'
-    description: 'optional: add a brief description'
-    location: 'optional: specify where the item was lost/found'
-    person_info: 'optional: add any identifying details (e.g., tag, initials)'
+  dry_validation:
+    errors:
+      rules:
+        type:
+          filled?: 'please select whether the item is lost or found'
+          type_valid?: 'invalid item type (must be lost or found)'
+        name:
+          filled?: 'please provide a name for the item'
+        tags:
+          tags_valid?: 'invalid tag. must be an integer'
+        contact_type:
+          contact_type_valid?: 'invalid contact type (must be email, phone, or other)'
+        contact_value:
+          contact_value_valid?: 'contact value must not be empty'
