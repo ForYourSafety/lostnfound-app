@@ -63,9 +63,15 @@ div class="row mt-3"
           div class="card-body"
             h6 class="card-subtitle mb-2 text-muted" Description
             p class="card-text" #{item.description}
-            - if item.location
+            - if item.location || item.time
               - location_text = item.type == "lost" ? "Lost at" : "Found at"
-              h6 class="card-subtitle mb-2 text-muted" #{location_text}
-              p class="card-text" #{item.location}
+              h6 class="card-subtitle mb-2 text-muted"
+                | #{location_text}
+              p class="card-text"
+                - if item.location
+                  | #{item.location}
+                  br
+                - if item.time
+                  | #{item.time_formatted}
 
 == assets([:js, :item_all])

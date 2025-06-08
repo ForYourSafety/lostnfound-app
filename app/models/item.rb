@@ -5,7 +5,7 @@ require 'ostruct'
 module LostNFound
   # Behaviors of an item entity
   class Item
-    attr_reader :id, :type, :name, :description, :location, :image_keys, :image_urls,
+    attr_reader :id, :type, :name, :description, :location, :time, :time_formatted, :image_keys, :image_urls,
                 :resolved, :challenge_question, :created_by, :contacts, :tags, :policies
 
     def initialize(item_info)
@@ -22,12 +22,15 @@ module LostNFound
       @name         = attributes['name']
       @description  = attributes['description']
       @location     = attributes['location']
+      @time         = attributes['time'] # seconds since epoch
       @resolved     = attributes['resolved']
       @created_by   = attributes['created_by']
       @challenge_question = attributes['challenge_question']
 
       @image_keys = attributes['image_keys']
       @image_urls = @image_keys.nil? ? [] : @image_keys.split(',').map { |key| "#{App.config.IMAGE_BASE_URL}/#{key}" }
+
+      @time_formatted = Time.at(@time).strftime('%Y/%m/%d (%a) %I:%M %p') if @time
     end
 
     def process_relationships(relationships)
