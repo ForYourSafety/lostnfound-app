@@ -1,7 +1,6 @@
-div class="row"
+div class="row justify-content-center"
   div class="col-sm-4"
-  div class="col-sm-4"
-    h3 class="text-center" Login
+    h3.text-center Login
     form method='post' action='/auth/login' id='form-login'
       div class="form-group"
         label for='input-username' Username
@@ -9,15 +8,11 @@ div class="row"
       div class="form-group"
         label for='input-password' Password
         input type='password' name='password' id='input-password' class="form-control"
-      
-      button type='submit' id='button-login' value='login' class="btn btn-primary btn-block mt-4" login
-  div class="col-sm-4"
-      h4 or
-  .col-sm-4
-    .row
-      h4.text-center Login with Github
-    .row
-      a class="btn btn-block btn-social btn-github" href=gh_oauth_url
-        span class="fab fa-github"
-        == "Github Sign-in"
-  .col-sm-1
+      button type='submit' id='button-login' class="btn btn-primary btn-block mt-4"
+        | Login
+
+    hr
+    h4.text-center.mt-4 Or
+    a href=gh_oauth_url class="btn btn-block mt-2 text-white" style="background-color: #24292e;"
+      span class="fab fa-github mr-2"
+      | Sign-in with GitHub 
