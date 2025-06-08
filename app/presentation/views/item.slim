@@ -37,8 +37,12 @@ div class="container"
           h5 Description
           p #{item.description}
 
-          h5 Location
-          p #{item.location}
+          - if item.location
+            h5 Location
+            p #{item.location}
+          - if item.time
+            h5 Time
+            p #{item.time_formatted}
         div class="col-md-6"
           h5 Tags
           div
