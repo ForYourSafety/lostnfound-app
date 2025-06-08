@@ -199,23 +199,35 @@ function submitForm() {
     });
 
     // yyyy/MM/dd hh:mm AA
-    const timestamp = new Date(itemTime).getTime() / 1000; // Convert to seconds since epoch
+    const timestamp = new Date(itemTime).getTime();
 
     // Create the form data
     const formData = new FormData();
     formData.append('name', itemName);
-    formData.append('description', itemDescription);
-    formData.append('location', itemLocation);
-    formData.append('time', timestamp);
-    formData.append('challenge_question', challengeQuestion);
-    formData.append('type', itemType);
+
+    if (itemDescription.trim() !== '')
+        formData.append('description', itemDescription);
+
+    if (itemLocation.trim() !== '')
+        formData.append('location', itemLocation);
+
+    if (timestamp)
+        formData.append('time', timestamp / 1000); // Convert to seconds
+    
+    if (challengeQuestion.trim() !== '')
+        formData.append('challenge_question', challengeQuestion);
+
+    if (itemType)
+        formData.append('type', itemType);
 
     itemTags.forEach((tag, index) => {
         formData.append('tags[]', tag);
     });
+
     images.forEach((image, index) => {
         formData.append('images[]', image);
     });
+    
     contacts.forEach((contact, index) => {
         formData.append('contact_type[]', contact.type);
         formData.append('contact_value[]', contact.value);
