@@ -1,14 +1,16 @@
 .row
-  .col-md-4
+  .col-md-6
     .d-flex.align-items-center
       - if mine
-        h3 My Items
+        h2 My Items
       - else
         h1 Items
       h2.ms-3.d-flex
         span.badge.rounded-pill.badge-light role="button" id="type-lost" data-mdb-ripple-init="" Lost
         span.badge.rounded-pill.badge-light.ms-1 role="button" id="type-found" data-mdb-ripple-init="" Found
-  .col-md-8
+        - if mine
+          span.badge.rounded-pill.badge-light.ms-2 role="button" id="show-resolved" data-mdb-ripple-init="" Resolved
+  .col-md-6
     .d-flex.justify-content-end.align-items-center
       .w-25
         select multiple="multiple" name="tag-filter" id="tag-filter" data-placeholder="Filter by tags"
@@ -28,7 +30,7 @@
 
 div class="row mt-3"
   - items.all.each_with_index do |item, item_idx|
-    div class="col-12 col-md-4 mb-2 item-card" style="display: none;" data-tags="#{item.tags.map(&:id).join(',')}" data-id="#{item.id}" data-type="#{item.type}" id="item-#{item.id}"
+    div class="col-12 col-md-4 mb-2 item-card" style="display: none;" data-tags="#{item.tags.map(&:id).join(',')}" data-id="#{item.id}" data-type="#{item.type}" data-resolved="#{item.resolved}" id="item-#{item.id}"
       a href="/items/#{item.id}"
         div class="card ripple bg-light" data-mdb-ripple-color="light"
           div class="bg-image hover-overlay"

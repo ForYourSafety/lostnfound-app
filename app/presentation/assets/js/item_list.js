@@ -4,6 +4,8 @@ window.onload = () => {
     tagFilters = urlParams.getAll('tag');
     search = urlParams.get('search') || '';
 
+    showResolved = urlParams.get('show-resolved')? true : false;
+
     // Select the options in the multi-select based on the URL parameters
     tagSelectElem = document.getElementById('tag-filter');
     const options = tagSelectElem.querySelectorAll('option');
@@ -51,6 +53,14 @@ window.onload = () => {
         updateFilters();
     });
 
+    showResolvedElem = document.getElementById('show-resolved');
+    showResolvedElem.addEventListener('click', function() {
+        showResolved = !showResolved;
+        showResolvedElem.classList.toggle('badge-warning', showResolved);
+        showResolvedElem.classList.toggle('badge-light', !showResolved);
+        updateFilters();
+    });
+
     updateFilters();
 
     // Add event listener for new item button
@@ -89,6 +99,15 @@ function typeVisible(item) {
     return itemType === typeFilter;
 }
 
+function resolvedVisible(item) {
+    const resolved = item.dataset.resolved;
+    if (showResolved) {
+        return true; // If show resolved is enabled, show all items
+    }
+
+    return resolved === '0'; // If show resolved is disabled, only show unresolved items
+}
+
 function updateFilters() {
     updateUrl();
 
@@ -97,8 +116,9 @@ function updateFilters() {
         const isSearchVisible = searchVisible(item);
         const isTagVisible = tagVisible(item);
         const isTypeVisible = typeVisible(item);
+        const isResolvedVisible = resolvedVisible(item);
 
-        if (isSearchVisible && isTagVisible && isTypeVisible) {
+        if (isSearchVisible && isTagVisible && isTypeVisible && isResolvedVisible) {
             item.style.display = 'block';
         } else {
             item.style.display = 'none';
@@ -116,6 +136,13 @@ function updateUrl() {
     // Add the type filter to the URL parameters
     if (typeFilter) {
         urlParams.set('type', typeFilter);
+    }
+
+    // Add the show resolved filter to the URL parameters
+    if (showResolved) {
+        urlParams.set('show-resolved', true);
+    } else {
+        urlParams.delete('show-resolved');
     }
 
     // Update the search parameter
