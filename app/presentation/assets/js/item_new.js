@@ -1,18 +1,15 @@
-window.onload = () => {
-    // Get filters from url
-    const urlParams = new URLSearchParams(window.location.search);
-
-    tagSelectElem = document.getElementById('tag-select');
-
-    // Initialize the multi-select
-    tagSelect = new MultiSelect(tagSelectElem, {
-        placeholder: 'Add tags...',
-        selectAll: false
-    });
-
+document.addEventListener('DOMContentLoaded', function() {
+    setupTypeSelection();
+    setupContactInput();
     setupFilePond();
     setupDateTimePicker();
+    setupTagSelect();
+    setupSubmitButton();
+});
 
+function setupTypeSelection() {
+    const urlParams = new URLSearchParams(window.location.search);
+    itemType = urlParams.get('type') || 'found';
     typeLost = document.getElementById('type-lost');
     typeFound = document.getElementById('type-found');
 
@@ -28,16 +25,7 @@ window.onload = () => {
         itemType = 'found';
         updateType();
     });
-
-    // Add event listener for the form submit button
-    const submitButton = document.getElementById('submit-button');
-    submitButton.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        submitForm()
-    });
 }
-
 
 function updateType() {
     updateUrl();
@@ -48,7 +36,6 @@ function updateType() {
     typeFound.classList.toggle('badge-light', itemType !== 'found');
 }
 
-
 function updateUrl() {
     const urlParams = new URLSearchParams();
 
@@ -58,7 +45,19 @@ function updateUrl() {
     window.history.pushState({ path: newUrl }, '', newUrl);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function setupTagSelect() {
+   tagSelectElem = document.getElementById('tag-select');
+
+    // Initialize the multi-select
+    tagSelect = new MultiSelect(tagSelectElem, {
+        placeholder: 'Add tags...',
+        selectAll: false
+    });
+}
+
+
+
+function setupContactInput() {
     const addContactButton = document.getElementById('add-contact-button');
     const addContactEntry = document.getElementById('add-contact-entry');
     const contactList = document.getElementById('contact-list');
@@ -130,7 +129,28 @@ document.addEventListener('DOMContentLoaded', function() {
             validateContactInput(event.target);
         });
     });
-});
+}
+
+function setupDateTimePicker() {
+    const locale = {
+        days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        daysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        daysMin: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        today: 'Today',
+        clear: 'Clear',
+        dateFormat: 'yyyy/MM/dd',
+        timeFormat: 'hh:mm AA',
+        firstDay: 0
+    };
+
+    new AirDatepicker('#item-time', {
+        inline: true,
+        timepicker: true,
+        locale: locale
+    });
+}
 
 
 function setupFilePond() {
@@ -146,6 +166,15 @@ function setupFilePond() {
     );
 
     console.log('FilePond initialized');
+}
+
+function setupSubmitButton() {
+    const submitButton = document.getElementById('submit-button');
+    submitButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        submitForm()
+    });
 }
 
 function submitForm() {
@@ -208,23 +237,3 @@ function submitForm() {
     });
 }
 
-function setupDateTimePicker() {
-    const locale = {
-        days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-        daysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-        daysMin: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-        months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        today: 'Today',
-        clear: 'Clear',
-        dateFormat: 'yyyy/MM/dd',
-        timeFormat: 'hh:mm AA',
-        firstDay: 0
-    };
-
-    new AirDatepicker('#item-time', {
-        inline: true,
-        timepicker: true,
-        locale: locale
-    });
-}
