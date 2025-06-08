@@ -32,6 +32,32 @@ module LostNFound
             end
           end
 
+          routing.on 'items' do
+            routing.get do
+              unless @current_account.logged_in?
+                flash[:error] = 'You must be logged in to view your items.'
+                routing.redirect '/auth/login'
+              end
+
+              items_data = GetAccountItems.new(App.config).call(
+                current_account: @current_account
+              )
+
+              if items_data.nil?
+                response.status = 400
+                flash[:error] = 'Failed to retrieve items.'
+                routing.redirect(request.referrer || '/')
+              end
+
+              items = Items.new(items_data)
+
+              all_tags_data = GetAllTags.new(App.config).call(@current_account)
+              all_tags = Tags.new(all_tags_data)
+
+              view :item_list, locals: { current_user: @current_account, items:, all_tags:, mine: true }
+            end
+          end
+
           # GET /account/
           routing.get do
             if @current_account && @current_account.username == username
