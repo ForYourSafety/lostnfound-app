@@ -42,8 +42,8 @@ module LostNFound
 
             flash[:success] = 'Item created successfully.'
             response.status = 201
-            response['Location'] = '/items/xxx'
-            { message: 'Item saved' }.to_json
+            response['Location'] = "/items/#{item_data['attributes']['id']}"
+            { message: 'Item saved', data: item_data }.to_json
           end
         end
 
