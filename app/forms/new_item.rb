@@ -11,12 +11,12 @@ module LostNFound
       params do
         required(:type).filled(:string)
         required(:name).filled(:string)
+        optional(:contact_type).filled(:array)
+        optional(:contact_value).filled(:array)
         optional(:description).maybe(:string)
         optional(:location).maybe(:string)
         optional(:challenge_question).maybe(:string)
         optional(:tags).maybe(:array)
-        optional(:contact_type).maybe(:array)
-        optional(:contact_value).maybe(:array)
         optional(:images).maybe(:array)
       end
 
@@ -34,7 +34,7 @@ module LostNFound
       end
 
       rule(:contact_type) do
-        next if value.nil? || value.empty?
+        key.failure(:missing?) if value.nil? || value.empty?
 
         allowed_types = %w[email phone address facebook twitter instagram whatsapp telegram line signal wechat discord
                            other]
@@ -42,8 +42,7 @@ module LostNFound
       end
 
       rule(:contact_value) do
-        next if value.nil? || value.empty?
-
+        key.failure(:missing?) if value.nil? || value.empty?
         key.failure(:contact_value_valid?) unless value.all? { |val| val.is_a?(String) && !val.strip.empty? }
       end
     end

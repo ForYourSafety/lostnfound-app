@@ -11,5 +11,7 @@ en:
           tags_valid?: 'invalid tag. must be an integer'
         contact_type:
           contact_type_valid?: 'invalid contact type (must be email, phone, or other)'
+          missing?: 'please provide at least one contact method'
         contact_value:
           contact_value_valid?: 'contact value must not be empty'
+          missing?: 'please provide at least one contact method'
