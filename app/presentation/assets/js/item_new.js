@@ -81,7 +81,6 @@ function setupContactInput() {
     addContactButton.addEventListener('click', function() {
         // Clone the contact entry
         const newContactEntry = addContactEntry.cloneNode(true);
-        newContactEntry.classList.add('contact-entry');
 
         // Get the values
         const select = addContactEntry.querySelector('#add-contact-type');
@@ -108,7 +107,6 @@ function setupContactInput() {
         newContactEntry.removeAttribute('id');
         newSelect.removeAttribute('id');
         newInput.removeAttribute('id');
-        newInput.setAttribute('required', '');      
         const button = newContactEntry.querySelector('button');
         button.removeAttribute('id');
 
@@ -194,7 +192,7 @@ function submitForm() {
     const itemTags = tagSelect.selectedValues;
     const images = imageFileUpload.getFiles().map(file => file.file);
 
-    const contacts = Array.from(document.querySelectorAll('#contact-list .contact-entry')).map(entry => {
+    const contacts = Array.from(document.querySelectorAll('.contact-entry')).map(entry => {
         const type = entry.querySelector('.contact-type').value;
         const value = entry.querySelector('.contact-value').value;
         return { type, value };

@@ -49,7 +49,7 @@ div class="container"
             div.my-3
               h5 Contact Information
               . id="contact-list"
-              .d-flex.align-items-center.mb-2 id="add-contact-entry"
+              .d-flex.align-items-center.mb-2.contact-entry id="add-contact-entry"
                 select.form-select.me-2.flex-shrink-0.contact-type style="width: 30%;" data-mdb-select-init="" id="add-contact-type"
                   option value="email" E-mail
                   option value="phone" Phone
@@ -65,7 +65,7 @@ div class="container"
                   option value="discord" Discord
                   option value="other" Other
                 .input-group.form-outline.me-2 data-mdb-input-init=""
-                  input.form-control.contact-value id="add-contact-value" type="text"
+                  input.form-control.contact-value id="add-contact-value" type="text" required=""
                   label.form-label for="add-contact-value" Value
                   .invalid-feedback Please enter a value.
                 button.btn.btn-success.btn-floating type="button" id="add-contact-button" data-mdb-ripple-init=""
