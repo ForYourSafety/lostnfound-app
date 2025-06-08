@@ -50,7 +50,7 @@ module LostNFound
         img_src: %w['self'],
         font_src: %w['self'] + FONT_SRC,
         script_src: %w['self'] + SCRIPT_SRC,
-        style_src: %W['self', 'unsafe-inline'] + STYLE_SRC, # allows inline styles
+        style_src: %W['self' 'unsafe-inline'] + STYLE_SRC, # allows inline styles
         form_action: %w['self'],
         frame_ancestors: %w['none'],
         object_src: %w['none'],
