@@ -13,14 +13,20 @@
         label.form-label for="search_input" Search
         i.fas.fa-search style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"
 
+.row.my-3
 - if for_item
-  .row.my-3
     h4 Contact requests for item #{for_item.name}
     - if for_item.challenge_question
       h4
         | Challenge Question: 
         strong 
           | #{for_item.challenge_question}
+- else
+  - if to_me
+    h4 Contact requests to me
+  - else
+    h4 Contact requests made by me
+
 
 div class="row mt-3"
   - requests.all.each_with_index do |request, request_idx|
@@ -32,7 +38,8 @@ div class="row mt-3"
               
             h4 class="card-title"
               - if !for_item
-                | Item: #{request.item.name}
+                a.me-2 href="/items/#{request.item.id}"
+                  | #{request.item.name}
               - if request.status == "unanswered"
                 span class="badge rounded-pill badge-dark" Unanswered
               - elsif request.status == "approved"

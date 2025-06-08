@@ -65,6 +65,31 @@ module LostNFound
             end
           end
         end
+
+        routing.is do
+          # GET /requests
+          # Requests to me
+          routing.get do
+            unless @current_account.logged_in?
+              flash[:error] = 'You must be logged in to view requests.'
+              routing.redirect '/auth/login'
+            end
+
+            requests_data = GetRequests.new(App.config).call(
+              current_account: @current_account
+            )
+
+            if requests_data.nil?
+              response.status = 400
+              flash[:error] = 'Failed to retrieve requests.'
+              routing.redirect(request.referrer || '/')
+            end
+
+            requests = Requests.new(requests_data)
+
+            view :request_list, locals: { current_user: @current_account, requests:, for_item: nil, to_me: true }
+          end
+        end
       end
     end
   end

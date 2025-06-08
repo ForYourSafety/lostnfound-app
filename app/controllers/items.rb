@@ -121,11 +121,10 @@ module LostNFound
 
               requests = Requests.new(requests_data)
 
-              flash[:notice] = 'There are no requests to this item.' if requests.all.empty?
               for_item = requests.all[0].item if requests.all.any?
 
               view :request_list,
-                   locals: { current_user: @current_account, requests:, for_item: }
+                   locals: { current_user: @current_account, requests:, for_item:, to_me: false }
             end
 
             # POST /items/:item_id/requests
