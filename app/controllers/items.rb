@@ -77,14 +77,32 @@ module LostNFound
             end
           end
 
-          routing.on 'request' do
-            # POST /items/:item_id/request
-            routing.post do
-              unless @current_account.logged_in?
-                flash[:error] = 'You must be logged in to request the contact information of an item.'
-                routing.redirect '/auth/login'
+          routing.on 'requests' do
+            unless @current_account.logged_in?
+              flash[:error] = 'You must be logged in to access the requests of an item.'
+              routing.redirect '/auth/login'
+            end
+
+            # GET /items/:item_id/requests
+            routing.get do
+              requests_data = GetItemRequests.new(App.config).call(
+                current_account: @current_account,
+                item_id: item_id
+              )
+
+              if requests_data.nil?
+                flash[:error] = 'Could not get requests for item'
+                routing.redirect "/items/#{item_id}"
               end
 
+              requests = Requests.new(requests_data)
+
+              view :request_list,
+                   locals: { current_user: @current_account, requests: requests }
+            end
+
+            # POST /items/:item_id/requests
+            routing.post do
               request_form = Form::NewRequest.new.call(routing.params)
               if request_form.failure?
                 response.status = 400

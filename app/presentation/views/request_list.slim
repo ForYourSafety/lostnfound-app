@@ -1,0 +1,31 @@
+.row
+  .col-md-4
+    .d-flex.align-items-center
+      h1 Contact Requests
+  .col-md-8
+    .d-flex.justify-content-end.align-items-center
+      .form-outline.w-25.ms-2 data-mdb-input-init=""
+        input.form-control type="search" aria-label="Search" aria-describedby="search-addon" id="search_input"
+        label.form-label for="search_input" Search
+        i.fas.fa-search style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"
+
+div class="row mt-3"
+  - requests.all.each_with_index do |request, request_idx|
+    div class="col-12 col-md-6 mb-2 request-card" data-id="#{request.id}"
+      a href="/requests/#{request.id}"
+        div class="card ripple bg-light" data-mdb-ripple-color="light"
+          div class="bg-image hover-overlay"
+          div class="card-header"
+            h5
+              - if request.requester_id == current_user.id
+                span class="badge rounded-pill badge-info ms-1" You Requested
+            h4 class="card-title"
+              | Item: #{request.item.name}
+          div class="card-body"
+            - if request.item.challenge_question
+              h6 class="card-subtitle mb-2 text-muted" Challenge Question
+              p class="card-text" #{request.item.challenge_question}
+            h6 class="card-subtitle mb-2 text-muted" Message
+            p class="card-text" #{request.message}
+
+/ == assets([:js, :item_all])
