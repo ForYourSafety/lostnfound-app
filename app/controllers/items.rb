@@ -47,22 +47,28 @@ module LostNFound
           end
         end
 
-        # GET /items/:item_id
-        routing.get String do |item_id|
-          item_json = GetItem.new(App.config).call(
-            current_account: @current_account,
-            item_id: item_id
-          )
+        routing.on String do |item_id|
+          # GET /items/:item_id
+          routing.get do
+            item_json = GetItem.new(App.config).call(
+              current_account: @current_account,
+              item_id: item_id
+            )
 
-          if item_json.nil?
-            flash[:error] = "Item with ID #{item_id} not found."
-            routing.redirect '/items'
+            if item_json.nil?
+              flash[:error] = "Item with ID #{item_id} not found."
+              routing.redirect '/items'
+            end
+
+            item = Item.new(item_json)
+
+            view :item,
+                 locals: { current_user: @current_account, item: item }
           end
 
-          item = Item.new(item_json)
-
-          view :item,
-               locals: { current_user: @current_account, item: item }
+          # DELETE /items/:item_id
+          routing.delete do
+          end
         end
 
         # GET /items/
