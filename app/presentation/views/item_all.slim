@@ -31,19 +31,21 @@ div class="row mt-3"
           div class="bg-image hover-overlay"
             - if item.image_urls.any?
               div id="carousel_#{item_idx}" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init=""
-                div class="carousel-indicators"
-                  - item.image_urls.count.times do |image_idx|
-                    - active_class = image_idx == 0 ? "active" : ""
-                    button type="button" data-mdb-target="carousel_#{item_idx}" data-mdb-slide-to="#{image_idx}" class="#{active_class}" aria-current="true" aria-label="Slide #{image_idx + 1}"
+                - if item.image_urls.count > 1
+                  div class="carousel-indicators"
+                    - item.image_urls.count.times do |image_idx|
+                      - active_class = image_idx == 0 ? "active" : ""
+                      button type="button" data-mdb-target="carousel_#{item_idx}" data-mdb-slide-to="#{image_idx}" class="#{active_class}" aria-current="true" aria-label="Slide #{image_idx + 1}"
                 div class="carousel-inner shadow-4-strong"
                   - item.image_urls.each_with_index do |image_url, image_idx|
                     - active_class = image_idx == 0 ? "active" : ""
                     div class="carousel-item #{active_class}"
                       img src="#{image_url}" class="d-block w-100" alt="Item Image #{image_idx + 1}"
-                button class="carousel-control-prev" type="button" data-mdb-target="#carousel_#{item_idx}" data-mdb-slide="prev"
-                  span class="carousel-control-prev-icon" aria-hidden="true"
-                button class="carousel-control-next" type="button" data-mdb-target="#carousel_#{item_idx}" data-mdb-slide="next"
-                  span class="carousel-control-next-icon" aria-hidden="true"
+                - if item.image_urls.count > 1
+                  button class="carousel-control-prev" type="button" data-mdb-target="#carousel_#{item_idx}" data-mdb-slide="prev"
+                    span class="carousel-control-prev-icon" aria-hidden="true"
+                  button class="carousel-control-next" type="button" data-mdb-target="#carousel_#{item_idx}" data-mdb-slide="next"
+                    span class="carousel-control-next-icon" aria-hidden="true"
             - else
               h6.text-center.pt-3 No image available
           div class="card-header"
