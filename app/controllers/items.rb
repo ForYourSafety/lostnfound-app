@@ -68,6 +68,24 @@ module LostNFound
 
           # DELETE /items/:item_id
           routing.delete do
+            unless @current_account.logged_in?
+              response.status = 401
+              return { message: 'You must be logged in to delete an item.' }.to_json
+            end
+
+            result = DeleteItem.new(App.config).call(
+              current_account: @current_account,
+              item_id: item_id
+            )
+
+            unless result
+              response.status = 404
+              return { message: "Item with ID #{item_id} could not be deleted" }.to_json
+            end
+
+            flash[:success] = "Item with ID #{item_id} deleted successfully."
+            response.status = 204
+            { message: 'Item deleted' }.to_json
           end
         end
 
