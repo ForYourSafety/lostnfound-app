@@ -18,9 +18,6 @@ module LostNFound
 
       response = request.patch("#{@config.API_URL}/requests/#{request_id}", json: merge_patch)
 
-      puts merge_patch.to_json
-      puts "ReplyRequest response: #{response}"
-
       response.code == 200 ? JSON.parse(response.to_s)['data'] : nil
     end
   end
