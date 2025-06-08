@@ -11,9 +11,10 @@ div class="container"
             span class="badge rounded-pill badge-info ms-1" style="font-size: 0.6em;" Posted by you
       div class="col-md-6 text-end"
         - if item.policies.can_delete
-          button.btn.btn-danger.ms-2.mt-2 data-mdb-ripple-init="" id="delete-item" data-item-id="#{item.id}"
-            i.fas.fa-trash-alt.me-md-2
-            |  Delete
+          form action="/items/#{item.id}/delete" method="post" class="d-inline" id="delete-form"
+            button.btn.btn-danger data-mdb-ripple-init="" data-item-id="#{item.id}"
+              i.fas.fa-trash-alt.me-md-2
+              |  Delete
         - if item.policies.can_edit
           button.btn.btn-warning.ms-2.mt-2 data-mdb-ripple-init="" id="edit-item" data-item-id="#{item.id}"
             i.fas.fa-edit.me-md-2

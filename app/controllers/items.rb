@@ -48,6 +48,30 @@ module LostNFound
         end
 
         routing.on String do |item_id|
+          routing.on 'delete' do
+            # POST /items/:item_id/delete
+            routing.post do
+              unless @current_account.logged_in?
+                flash[:error] = 'You must be logged in to delete an item.'
+                routing.redirect '/auth/login'
+              end
+
+              result = DeleteItem.new(App.config).call(
+                current_account: @current_account,
+                item_id: item_id
+              )
+
+              unless result
+                response.status = 404
+                flash[:error] = 'Item could not be deleted.'
+                routing.redirect "/items/#{item_id}"
+              end
+
+              flash[:notice] = 'Item deleted successfully.'
+              routing.redirect '/items'
+            end
+          end
+
           # GET /items/:item_id
           routing.get do
             item_json = GetItem.new(App.config).call(
@@ -64,28 +88,6 @@ module LostNFound
 
             view :item,
                  locals: { current_user: @current_account, item: item }
-          end
-
-          # DELETE /items/:item_id
-          routing.delete do
-            unless @current_account.logged_in?
-              response.status = 401
-              return { message: 'You must be logged in to delete an item.' }.to_json
-            end
-
-            result = DeleteItem.new(App.config).call(
-              current_account: @current_account,
-              item_id: item_id
-            )
-
-            unless result
-              response.status = 404
-              return { message: "Item with ID #{item_id} could not be deleted" }.to_json
-            end
-
-            flash[:success] = "Item with ID #{item_id} deleted successfully."
-            response.status = 204
-            { message: 'Item deleted' }.to_json
           end
         end
 
