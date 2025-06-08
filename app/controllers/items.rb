@@ -24,10 +24,10 @@ module LostNFound
 
           # POST /items/new
           routing.post do
-            # unless @current_account.logged_in?
-            #   response.status = 401
-            #   return { message: 'You must be logged in to create a new item.' }.to_json
-            # end
+            unless @current_account.logged_in?
+              response.status = 401
+              return { message: 'You must be logged in to create a new item.' }.to_json
+            end
 
             item_form = Form::NewItem.new.call(routing.params)
             if item_form.failure?
