@@ -2,10 +2,42 @@ h1 Account Details
 
 div class="container"
   div class="row"
-    div class="col-sm-2" Username:
+    div class="col-sm-2"
+      | Username:
     div class="col-sm-10"
-      == @current_account.username
+      div = @current_account.username
+
   div class="row"
-    div class="col-sm-2" Email:
+    div class="col-sm-2"
+      | Email:
     div class="col-sm-10"
-      == @current_account.email
+      div = @current_account.email
+
+  div.row.top-buffer
+
+  div
+    h3 API Access:
+
+  div.row
+    div
+      span (read-only key valid for one month)
+
+  div.row
+    div.col-sm-2
+      | API Key:
+    div.col-sm-10
+      div.blockquote
+        a.btn.btn-primary.mb-2[
+          data-mdb-collapse-init
+          data-mdb-ripple-init
+          href="#api_key"
+          role="button"
+          aria-expanded="false"
+          aria-controls="api_key"
+        ]
+          | Show key
+
+        div.collapse#api_key
+          div.card.card-body
+            pre.text-wrap
+              = account.auth_token

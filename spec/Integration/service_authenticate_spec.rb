@@ -5,10 +5,10 @@ require 'webmock/minitest'
 
 describe 'Test Service Objects' do # rubocop:disable Metrics/BlockLength
   before do
-    @credentials = { username: 'master.yi', password: 'abcdefg' }
-    @mal_credentials = { username: 'master.yi', password: 'gfedcba' }
+    @credentials = { username: 'sarahpan', password: '12345678a' }
+    @mal_credentials = { username: 'sarahpan', password: 'gfedcba' }
     @api_account = { attributes:
-                       { username: 'master.yi', email: 'yi@nthu.edu.tw' } }
+                       { username: 'sarahpan', email: 'sarah.pan@iss.nthu.edu.tw' } }
   end
 
   after do
@@ -26,6 +26,15 @@ describe 'Test Service Objects' do # rubocop:disable Metrics/BlockLength
       # puts "Seeded response saved to #{auth_account_file}"
 
       auth_return_json = File.read(auth_account_file)
+      WebMock.disable!
+      response = HTTP.post("#{app.config.API_URL}/auth/authenticate",
+                           json: { username: @credentials[:username], password: @credentials[:password] })
+
+      auth_account_json = response.body.to_s
+      File.write(auth_account_file, auth_account_json)
+      puts "Seeded response saved to #{auth_account_file}"
+      WebMock.enable!
+      auth_return_json = File.read(auth_account_file)
       WebMock.stub_request(:post, "#{API_URL}/auth/authenticate")
              .with(body: @credentials.to_json)
              .to_return(body: auth_return_json,
@@ -33,8 +42,8 @@ describe 'Test Service Objects' do # rubocop:disable Metrics/BlockLength
 
       account = LostNFound::AuthenticateAccount.new(app.config).call(**@credentials)
       _(account).wont_be_nil
-      _(account['username']).must_equal @api_account[:attributes][:username]
-      _(account['email']).must_equal @api_account[:attributes][:email]
+      _(account[:account]['attributes']['username']).must_equal @api_account[:attributes][:username]
+      _(account[:account]['attributes']['email']).must_equal @api_account[:attributes][:email]
     end
 
     it 'BAD: should not find a false authenticated account' do
