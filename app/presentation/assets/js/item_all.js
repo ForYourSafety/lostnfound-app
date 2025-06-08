@@ -33,21 +33,20 @@ window.onload = () => {
         updateFilters();
     });
 
-    // Radio buttons: type-lost and type-found
     typeLost = document.getElementById('type-lost');
     typeFound = document.getElementById('type-found');
 
-    typeFilter = urlParams.get('type') || 'found';
+    typeFilter = urlParams.get('type') || '';
     updateTypeStyle();
 
     typeLost.addEventListener('click', function() {
-        typeFilter = 'lost';
+        typeFilter = typeFilter === 'lost' ? '' : 'lost';
         updateTypeStyle();
         updateFilters();
     });
 
     typeFound.addEventListener('click', function() {
-        typeFilter = 'found';
+        typeFilter = typeFilter === 'found' ? '' : 'found';
         updateTypeStyle();
         updateFilters();
     });
@@ -58,6 +57,7 @@ window.onload = () => {
     const newItemButton = document.getElementById('new-item-button');
     if (newItemButton) {
         newItemButton.addEventListener('click', function() {
+            newType = typeFilter || 'found'; // Default to 'found' if no type is selected
             window.location.href = '/items/new?type=' + typeFilter;
         });
     }
@@ -84,6 +84,8 @@ function tagVisible(item) {
 
 function typeVisible(item) {
     const itemType = item.dataset.type;
+    if (!typeFilter)
+        return true; // If no type filter is set, show all items
     return itemType === typeFilter;
 }
 
@@ -112,7 +114,9 @@ function updateUrl() {
     const urlParams = new URLSearchParams();
 
     // Add the type filter to the URL parameters
-    urlParams.set('type', typeFilter);
+    if (typeFilter) {
+        urlParams.set('type', typeFilter);
+    }
 
     // Update the search parameter
     if (searchValue) {
