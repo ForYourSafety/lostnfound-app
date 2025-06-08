@@ -34,7 +34,7 @@ module LostNFound
           CurrentSession.new(session).current_account = current_account
 
           routing.redirect '/'
-        rescue AuthenticateAccount::UnauthorizedError
+        rescue AuthenticateAccount::NotAuthenticatedError
           flash.now[:error] = 'Username and password did not match our records'
           response.status = 401
           view :login
