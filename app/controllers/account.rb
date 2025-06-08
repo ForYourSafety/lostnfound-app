@@ -8,12 +8,37 @@ module LostNFound
   class App < Roda
     route('account') do |routing|
       routing.on do
-        # GET /account/
-        routing.get String do |username|
-          if @current_account && @current_account.username == username
-            view :account, locals: { current_account: @current_account }
-          else
-            routing.redirect '/auth/login'
+        routing.on String do |username|
+          routing.on 'requests' do
+            routing.get do
+              unless @current_account.logged_in?
+                flash[:error] = 'You must be logged in to view your requests.'
+                routing.redirect '/auth/login'
+              end
+
+              requests_data = GetAccountRequests.new(App.config).call(
+                current_account: @current_account
+              )
+
+              if requests_data.nil?
+                response.status = 400
+                flash[:error] = 'Failed to retrieve requests.'
+                routing.redirect(request.referrer || '/')
+              end
+
+              requests = Requests.new(requests_data)
+
+              view :request_list, locals: { current_user: @current_account, requests:, for_item: nil, to_me: false }
+            end
+          end
+
+          # GET /account/
+          routing.get do
+            if @current_account && @current_account.username == username
+              view :account, locals: { current_account: @current_account }
+            else
+              routing.redirect '/auth/login'
+            end
           end
         end
 

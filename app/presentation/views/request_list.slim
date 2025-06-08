@@ -15,7 +15,10 @@
 
 .row.my-3
 - if for_item
-    h4 Contact requests for item #{for_item.name}
+    h4 Contact requests for item: #{for_item.name}
+    a.btn.btn-info.ms-2.mt-1 href="/items/#{request.item.id}" data-mdb-ripple-init=""
+      i.fas.fa-external-link.me-md-2
+      |  Go to Item
     - if for_item.challenge_question
       h4
         | Challenge Question: 
@@ -38,7 +41,7 @@ div class="row mt-3"
               
             h4 class="card-title"
               - if !for_item
-                a.me-2 href="/items/#{request.item.id}"
+                span.me-3
                   | #{request.item.name}
               - if request.status == "unanswered"
                 span class="badge rounded-pill badge-dark" Unanswered
@@ -55,25 +58,36 @@ div class="row mt-3"
               div style="float: right;"
                 - if request.policies.can_delete
                   form action="/requests/#{request.id}/delete" method="post" class="d-inline" id="delete-form"
-                    button.btn.btn-danger.ms-2.mt-1 data-mdb-ripple-init="" data-item-id="#{request.id}"
+                    button.btn.btn-danger.ms-2.mt-1 data-mdb-ripple-init=""
                       i.fas.fa-trash-alt.me-md-2
                       |  Delete
                 - if request.policies.can_reply
                   form action="/requests/#{request.id}/reply" method="post" class="d-inline" id="approve-form"
                     input type="hidden" name="action" value="approve"
-                    button.btn.btn-success.ms-2.mt-1 data-mdb-ripple-init="" data-item-id="#{request.id}"
+                    button.btn.btn-success.ms-2.mt-1 data-mdb-ripple-init=""
                       i.fas.fa-check.me-md-2
                       |  Approve
                   form action="/requests/#{request.id}/reply" method="post" class="d-inline" id="decline-form"
                     input type="hidden" name="action" value="decline"
-                    button.btn.btn-danger.ms-2.mt-1 data-mdb-ripple-init="" data-item-id="#{request.id}"
+                    button.btn.btn-danger.ms-2.mt-1 data-mdb-ripple-init=""
                       i.fas.fa-times.me-md-2
                       |  Decline
+                - if !for_item
+                  a.btn.btn-info.ms-2.mt-1 href="/items/#{request.item.id}" data-mdb-ripple-init=""
+                    i.fas.fa-external-link.me-md-2
+                    |  Go to Item
           div class="card-body"
             - if !for_item && request.item.challenge_question
               h6 class="card-subtitle mb-2 text-muted" Challenge Question
               p class="card-text" #{request.item.challenge_question}
             h6 class="card-subtitle mb-2 text-muted" Message
             p class="card-text" #{request.message}
+          - if request.status == "approved" && request.requester_id == current_user.id
+            div class="card-footer"
+              p
+                - if request.item.resolved == 1
+                  | The item has been resolved. You can no longer view the contact information.
+                - else
+                  | The item poster has approved your request! Go ahead and see their contact information on the item page!
 
 == assets([:js, :request_list])
