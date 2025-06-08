@@ -160,6 +160,7 @@ function submitForm() {
     const itemName = document.getElementById('item-name').value;
     const itemDescription = document.getElementById('item-description').value;
     const itemLocation = document.getElementById('item-location').value;
+    const itemTime = document.getElementById('item-time').value;
     const challengeQuestion = document.getElementById('challenge-question').value;
     const itemTags = tagSelect.selectedValues;
     const images = imageFileUpload.getFiles().map(file => file.file);
@@ -170,11 +171,15 @@ function submitForm() {
         return { type, value };
     });
 
+    // yyyy/MM/dd hh:mm AA
+    const timestamp = new Date(itemTime).getTime();
+
     // Create the form data
     const formData = new FormData();
     formData.append('name', itemName);
     formData.append('description', itemDescription);
     formData.append('location', itemLocation);
+    formData.append('time', timestamp);
     formData.append('challenge_question', challengeQuestion);
     formData.append('type', itemType);
 
