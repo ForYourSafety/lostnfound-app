@@ -87,16 +87,17 @@ div class="container"
                     | The requester has a challenge question. You should include your answer to this question in your message:
                     br
                     strong #{item.challenge_question}
-                div class="form-outline" data-mdb-input-init=""
-                  textarea.form-control id="request_message" rows="4"
-                  label.form-label for="request_message" Message
-                div class="text-end my-3"
-                  button.btn.btn-secondary data-mdb-ripple-init=""
-                    i.fas.fa-list.me-md-2
-                    | My Requests
-                  button.btn.btn-info.ms-2 data-mdb-ripple-init=""
-                    i.fas.fa-envelope.me-md-2
-                    | Request Contact
+                form action="/items/#{item.id}/request" method="post" id="request-form"
+                  div class="form-outline" data-mdb-input-init=""
+                    textarea.form-control id="request-message" name="message" required="" rows="4"
+                    label.form-label for="request-message" Message
+                  div class="text-end my-3"
+                    button.btn.btn-secondary data-mdb-ripple-init="" type="button"
+                      i.fas.fa-list.me-md-2
+                      | My Requests
+                    button.btn.btn-info.ms-2 data-mdb-ripple-init="" type="submit"
+                      i.fas.fa-envelope.me-md-2
+                      | Request Contact
               - else
                 - if current_user.logged_out?
                   p

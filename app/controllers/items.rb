@@ -77,6 +77,38 @@ module LostNFound
             end
           end
 
+          routing.on 'request' do
+            # POST /items/:item_id/request
+            routing.post do
+              unless @current_account.logged_in?
+                flash[:error] = 'You must be logged in to request the contact information of an item.'
+                routing.redirect '/auth/login'
+              end
+
+              request_form = Form::NewRequest.new.call(routing.params)
+              if request_form.failure?
+                response.status = 400
+                flash[:error] = Form.message_values(request_form)
+                routing.redirect "/items/#{item_id}"
+              end
+
+              result = CreateRequest.new(App.config).call(
+                current_account: @current_account,
+                item_id: item_id,
+                request_params: request_form.to_h
+              )
+
+              unless result
+                response.status = 400
+                flash[:error] = 'Request could not be sent.'
+                routing.redirect "/items/#{item_id}"
+              end
+
+              flash[:notice] = 'Request sent successfully.'
+              routing.redirect "/requests/#{result['attributes']['id']}"
+            end
+          end
+
           # GET /items/:item_id
           routing.get do
             item_json = GetItem.new(App.config).call(
