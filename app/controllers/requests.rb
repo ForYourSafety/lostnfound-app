@@ -39,7 +39,28 @@ module LostNFound
 
           routing.on 'reply' do
             routing.post do
-              flash[:notice] = 'Approved / Declined request successfully.'
+              action = routing.params['action']
+              unless %w[approve decline].include?(action)
+                response.status = 400
+                flash[:error] = 'Invalid action specified.'
+                routing.redirect(request.referrer || '/')
+              end
+
+              status = action == 'approve' ? 'approved' : 'declined'
+
+              result = ReplyRequest.new(App.config).call(
+                current_account: @current_account,
+                request_id: request_id,
+                status: status
+              )
+
+              unless result
+                response.status = 400
+                flash[:error] = "Request could not be #{status}."
+                routing.redirect(request.referrer || '/')
+              end
+
+              flash[:notice] = "The request has been #{status}."
               routing.redirect(request.referrer || '/')
             end
           end
