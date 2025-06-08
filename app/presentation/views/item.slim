@@ -11,15 +11,15 @@ div class="container"
             span class="badge rounded-pill badge-info ms-1" style="font-size: 0.6em;" Posted by you
       div class="col-md-6 text-end"
         - if item.policies.can_delete
-          button.btn.btn-danger.ms-2.mt-2 data-mdb-ripple-init=""
+          button.btn.btn-danger.ms-2.mt-2 data-mdb-ripple-init="" id="delete-item" data-item-id="#{item.id}"
             i.fas.fa-trash-alt.me-md-2
             |  Delete
         - if item.policies.can_edit
-          button.btn.btn-warning.ms-2.mt-2 data-mdb-ripple-init=""
+          button.btn.btn-warning.ms-2.mt-2 data-mdb-ripple-init="" id="edit-item" data-item-id="#{item.id}"
             i.fas.fa-edit.me-md-2
             |  Edit
         - if item.policies.can_resolve
-          button.btn.btn-success.ms-2.mt-2 data-mdb-ripple-init=""
+          button.btn.btn-success.ms-2.mt-2 data-mdb-ripple-init="" id="resolve-item" data-item-id="#{item.id}"
             i.fas.fa-check.me-md-2
             |  Resolve
   hr
@@ -110,3 +110,5 @@ div class="container"
                     button.btn.btn-secondary data-mdb-ripple-init=""
                       i.fas.fa-list.me-md-2
                       | My Requests
+
+== assets([:js, :item])
