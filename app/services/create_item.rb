@@ -23,6 +23,7 @@ module LostNFound
         name: item_params[:name],
         description: item_params[:description],
         location: item_params[:location],
+        time: item_params[:time],
         challenge_question: item_params[:challenge_question],
         tag_ids: tag_ids,
         contacts: contacts
@@ -42,8 +43,6 @@ module LostNFound
       request = request.use(logging: { logger: logger })
 
       response = request.post("#{@config.API_URL}/items", form: form)
-
-      binding.pry
 
       response.code == 201 ? JSON.parse(response.to_s)['data'] : nil
     end
