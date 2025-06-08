@@ -69,7 +69,7 @@ div class="container"
               p
                 | Check if someone has requested your contact information.
               div class="text-end my-3"
-                button.btn.btn-secondary data-mdb-ripple-init=""
+                a.btn.btn-secondary data-mdb-ripple-init="" href="/items/#{item.id}/requests"
                   i.fas.fa-list.me-md-2
                   | Requests to me
           - else
@@ -92,7 +92,7 @@ div class="container"
                     textarea.form-control id="request-message" name="message" required="" rows="4"
                     label.form-label for="request-message" Message
                   div class="text-end my-3"
-                    button.btn.btn-secondary data-mdb-ripple-init="" type="button"
+                    a.btn.btn-secondary data-mdb-ripple-init="" type="button" href="/items/#{item.id}/requests"
                       i.fas.fa-list.me-md-2
                       | My Requests
                     button.btn.btn-info.ms-2 data-mdb-ripple-init="" type="submit"
@@ -109,7 +109,7 @@ div class="container"
                   p
                     | Your request has been approved! Go ahead and contact the person who posted this item with the contact information above!
                   div class="text-end my-3"
-                    button.btn.btn-secondary data-mdb-ripple-init=""
+                    a.btn.btn-secondary data-mdb-ripple-init="" href="/items/#{item.id}/requests"
                       i.fas.fa-list.me-md-2
                       | My Requests
 
