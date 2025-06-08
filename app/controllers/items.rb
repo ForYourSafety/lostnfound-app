@@ -97,7 +97,7 @@ module LostNFound
 
               requests = Requests.new(requests_data)
 
-              flash[:notice] = 'There are no requests for this item.' if requests.all.empty?
+              flash[:notice] = 'There are no requests to this item.' if requests.all.empty?
               for_item = requests.all[0].item if requests.all.any?
 
               view :request_list,
@@ -126,7 +126,7 @@ module LostNFound
               end
 
               flash[:notice] = 'Request sent successfully.'
-              routing.redirect "/requests/#{result['attributes']['id']}"
+              routing.redirect "/items/#{item_id}/requests"
             end
           end
 

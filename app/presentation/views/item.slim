@@ -87,7 +87,7 @@ div class="container"
                     | The requester has a challenge question. You should include your answer to this question in your message:
                     br
                     strong #{item.challenge_question}
-                form action="/items/#{item.id}/request" method="post" id="request-form"
+                form action="/items/#{item.id}/requests" method="post" id="request-form"
                   div class="form-outline" data-mdb-input-init=""
                     textarea.form-control id="request-message" name="message" required="" rows="4"
                     label.form-label for="request-message" Message
