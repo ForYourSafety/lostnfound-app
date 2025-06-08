@@ -1,7 +1,10 @@
 .row
   .col-md-4
     .d-flex.align-items-center
-      h1 Items
+      - if mine
+        h3 My Items
+      - else
+        h1 Items
       h2.ms-3.d-flex
         span.badge.rounded-pill.badge-light role="button" id="type-lost" data-mdb-ripple-init="" Lost
         span.badge.rounded-pill.badge-light.ms-1 role="button" id="type-found" data-mdb-ripple-init="" Found
@@ -52,7 +55,7 @@ div class="row mt-3"
             - item_type_class = item.type == "lost" ? "badge-danger" : "badge-success"
             h5
               span class="badge rounded-pill #{item_type_class}" #{item.type.capitalize}
-              - if item.created_by == current_user.id
+              - if !mine && item.created_by == current_user.id
                 span class="badge rounded-pill badge-info ms-1" Posted by you
             h4 class="card-title"
               | #{item.name}
