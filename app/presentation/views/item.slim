@@ -108,9 +108,13 @@ div class="container"
                     |  or 
                     a href="/auth/register" Register
                     |  to request the contact information of the person who posted this item!
-                - if item.policies.can_view_contacts
-                  p
-                    | Your request has been approved! Go ahead and contact the person who posted this item with the contact information above!
+                - else
+                  - if item.policies.can_view_contacts
+                    p
+                      | Your request has been approved! Go ahead and contact the person who posted this item with the contact information above!
+                  - if item.resolved == 1
+                    p
+                      | This item has been resolved. You can no longer request contact information of the person who posted this item.
                   div class="text-end my-3"
                     a.btn.btn-secondary data-mdb-ripple-init="" href="/items/#{item.id}/requests"
                       i.fas.fa-list.me-md-2
