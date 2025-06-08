@@ -221,16 +221,35 @@ function submitForm() {
         formData.append('contact_value[]', contact.value);
     });
 
+    const loadingModalElem = document.getElementById('loading-modal');
+    loadingModal = new mdb.Modal(loadingModalElem);
+
+    loadingModal.show();
+
     // Send the form data
     fetch('/items/new', {
         method: 'POST',
         body: formData
     })
-    .then(response => {
+    .then(async response => {
         if (response.ok) {
-            // Handle success
+            res = await response.json();
+            console.log(res);
+
+            new_item_id = res.data.attributes.id;
+            window.location.href = `/items/${new_item_id}`;
         } else {
-            // Handle error
+            res = await response.json();
+            console.error('Error:', res);
+
+            const errorBar = document.getElementById('error-bar');
+            errorBar.innerText = res.message || 'An error occurred while submitting the form.';
+            errorBar.classList.remove('d-none');
+            errorBar.classList.add('d-block');
+
+            setTimeout(() => {
+                loadingModal.hide();
+            }, 500);
         }
     });
 }

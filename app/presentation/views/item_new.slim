@@ -1,3 +1,4 @@
+div class="alert alert-danger md-3 d-none" id="error-bar"
 div class="container"
   form.needs-validation id="item-form"
     div class="row"
@@ -77,6 +78,14 @@ div class="container"
               textarea.form-control rows="3" id="challenge-question"
               label.form-label for="challenge-question"
                 | Question (e.g. what's on the lock screen?)
+
+div class="modal fade" id="loading-modal" tabindex="-1" aria-hidden="true" data-mdb-backdrop="static" data-mdb-keyboard="false"
+  div class="modal-dialog modal-dialog-centered"
+    div class="modal-content d-flex flex-column align-items-center justify-content-center"
+      div class="modal-header"
+        h4 Posting your item...
+      div class="modal-body"
+        div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"
 
 
 == assets([:js, :item_new])
