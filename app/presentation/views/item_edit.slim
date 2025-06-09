@@ -22,9 +22,9 @@ div class="container"
           | Images
         - if item.image_urls.any?
           - item.image_urls.zip(item.image_keys).each_with_index do |(image_url, image_key), index|
-            .existing-image.position-relative data-image-key="#{image_key}"
+            .existing-image.position-relative data-key="#{image_key}"
               img src="#{image_url}" class="img-fluid rounded mb-3" alt="Item Image #{index + 1}" style="width: 100%;"
-              button.btn.btn-danger.btn-floating.position-absolute.top-0.end-0.m-1 type="button" data-mdb-ripple-init="" data-image-key="#{image_key}" data-item-id="#{item.id}" id="delete-image-button"
+              button.btn.btn-danger.btn-floating.position-absolute.top-0.end-0.m-1.delete-image-button type="button" data-mdb-ripple-init="" data-image-key="#{image_key}" data-item-id="#{item.id}"
                 i.fas.fa-times
         input type="file" id="image-upload" class="filepond" name="filepond" multiple="" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="10"
       div class="col-md-8"

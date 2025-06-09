@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupFilePond();
     setupDateTimePicker();
     setupTagSelect();
+    setupImageDeleteButton();
     setupSubmitButton();
 });
 
@@ -130,6 +131,24 @@ function setupContactInput() {
             validateContactInput(event.target);
         });
     });
+
+    const deleteContactButtons = document.getElementsByClassName('delete-contact-button');
+    for (let i = 0; i < deleteContactButtons.length; i++) {
+        deleteContactButtons[i].addEventListener('click', function() {
+            const contactEntry = this.closest('.contact-entry');
+            contactList.removeChild(contactEntry);
+        });
+    }
+}
+
+function setupImageDeleteButton() {
+    const deleteImageButtons = document.getElementsByClassName('delete-image-button');
+    for (let i = 0; i < deleteImageButtons.length; i++) {
+        deleteImageButtons[i].addEventListener('click', function() {
+            const imageEntry = this.closest('.existing-image');
+            imageEntry.remove();
+        });
+    }
 }
 
 function setupDateTimePicker() {
@@ -192,9 +211,9 @@ function submitForm() {
     const itemLocation = document.getElementById('item-location').value;
     const itemTime = document.getElementById('item-time').value;
     const challengeQuestion = document.getElementById('challenge-question').value;
-    const ownerName = document.getElementById('owner-name').value;
-    const ownerStudentId = document.getElementById('owner-student-id').value;
     const itemTags = tagSelect.selectedValues;
+
+    const existingImages = Array.from(document.querySelectorAll('.existing-image')).map(elem => elem.dataset.key);
     const images = imageFileUpload.getFiles().map(file => file.file);
 
     const contacts = Array.from(document.querySelectorAll('.contact-entry')).map(entry => {
@@ -222,16 +241,15 @@ function submitForm() {
     if (challengeQuestion.trim() !== '')
         formData.append('challenge_question', challengeQuestion);
 
-    if (ownerName.trim() !== '')
-        formData.append('owner_name', ownerName);
-    if (ownerStudentId.trim() !== '')
-        formData.append('owner_student_id', ownerStudentId);
-
     if (itemType)
         formData.append('type', itemType);
 
     itemTags.forEach((tag, index) => {
         formData.append('tags[]', tag);
+    });
+
+    existingImages.forEach((image, index) => {
+        formData.append('existing_images[]', image);
     });
 
     images.forEach((image, index) => {
@@ -248,8 +266,8 @@ function submitForm() {
 
     loadingModal.show();
 
-    // Send the form data
-    fetch('/items/new', {
+    // Send the form data to the same URL as the current page
+    fetch(window.location.href, {
         method: 'POST',
         body: formData
     })
