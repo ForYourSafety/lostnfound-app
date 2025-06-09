@@ -91,7 +91,7 @@ div class="container"
                   | You can request the contact information of the person who posted this item by leaving a message!
                   - if item.challenge_question
                     br
-                    | The requester has a challenge question. You should include your answer to this question in your message:
+                    | The poster has a challenge question. You should include your answer to this question in your message:
                     br
                     strong #{item.challenge_question}
                 form action="/items/#{item.id}/requests" method="post" id="request-form"
