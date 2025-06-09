@@ -6,6 +6,7 @@ require_relative 'app'
 module LostNFound
   # Web controller for LostNFound API
   class App < Roda # rubocop:disable Metrics/ClassLength
+
     def gh_oauth_url(config)
       url = config.GH_OAUTH_URL
       client_id = config.GH_CLIENT_ID
@@ -100,7 +101,9 @@ module LostNFound
         routing.is do
           # GET /auth/register
           routing.get do
-            view :register
+            view :register, locals: {
+              gh_oauth_url: gh_oauth_url(App.config)
+            }
           end
 
           # POST /auth/register
