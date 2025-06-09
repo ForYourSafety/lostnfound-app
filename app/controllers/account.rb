@@ -83,7 +83,7 @@ module LostNFound
 
               items = Items.new(items_data)
 
-              all_tags_data = GetAllTags.new(App.config).call(@current_account)
+              all_tags_data = GetAllTags.new(App.config).call(@current_account) || []
               all_tags = Tags.new(all_tags_data)
 
               view :item_list, locals: { current_user: @current_account, items:, all_tags:, mine: true }
