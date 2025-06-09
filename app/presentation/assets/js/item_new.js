@@ -45,8 +45,8 @@ function updateType() {
     ownerInfoDiv.classList.toggle('d-none', itemType !== 'found');
 
     locationLabel.innerText = itemType === 'lost' ?
-        'Where it was lost?' :
-        'Where it was found?';
+        'Where was it lost?' :
+        'Where was it found?';
     
     itemTimeElem.placeholder = itemType === 'lost' ?
         'Approximately when was it lost?' :
