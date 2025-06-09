@@ -27,8 +27,13 @@ module LostNFound
       @created_by   = attributes['created_by']
       @challenge_question = attributes['challenge_question']
 
-      @image_keys = attributes['image_keys']
-      @image_urls = @image_keys.nil? ? [] : @image_keys.split(',').map { |key| "#{App.config.IMAGE_BASE_URL}/#{key}" }
+      if attributes['image_keys'].nil?
+        @image_keys = []
+        @image_urls = []
+      else
+        @image_keys = attributes['image_keys'].split(',')
+        @image_urls = @image_keys.map { |key| "#{App.config.IMAGE_BASE_URL}/#{key}" }
+      end
 
       @time_formatted = Time.at(@time).strftime('%Y/%m/%d (%a) %I:%M %p') if @time
     end

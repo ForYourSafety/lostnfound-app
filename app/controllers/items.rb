@@ -101,6 +101,29 @@ module LostNFound
             end
           end
 
+          routing.on 'edit' do
+            # GET /items/:item_id/edit
+            routing.get do
+              item_data = GetItem.new(App.config).call(
+                current_account: @current_account,
+                item_id: item_id
+              )
+
+              if item_data.nil?
+                flash[:error] = "Item with ID #{item_id} not found."
+                routing.redirect '/items'
+              end
+
+              item = Item.new(item_data)
+
+              all_tags_data = GetAllTags.new(App.config).call(@current_account)
+              all_tags = Tags.new(all_tags_data)
+
+              view :item_edit,
+                   locals: { current_user: @current_account, item: item, all_tags: all_tags }
+            end
+          end
+
           routing.on 'requests' do
             unless @current_account.logged_in?
               flash[:error] = 'You must be logged in to access the requests of an item.'

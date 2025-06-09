@@ -16,6 +16,7 @@ module LostNFound
                       item: 'item.js',
                       item_list: 'item_list.js',
                       item_new: 'item_new.js',
+                      item_edit: 'item_edit.js',
                       request_list: 'request_list.js',
                       multiselect: 'MultiSelect.js'
                     }
