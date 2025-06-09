@@ -1,21 +1,22 @@
 h1 Welcome to Lost & Found Platform!
-p
+h5
   | This site allows you to post or report lost items, or search for your lost items.
 
-- unless current_account
-  p
-    a href='/auth/login' login to start!
+- unless current_account.logged_in?
+  h4
+    a href='/auth/login' Login to start posting items!
 - else
   h3
     | Hello, #{current_account.username}!
-  .row.mt-4
-    .col-md-6.my-4
-      h4
-        | Found an item?
-      p See if someone is searching for it!
-      a.btn.btn-danger href="/items/?type=lost" data-mdb-ripple-init=""
-        i.fas.fa-search.me-md-2
-        | Look for Lost Items
+.row.mt-4
+  .col-md-6.my-4
+    h4
+      | Found an item?
+    p See if someone is searching for it!
+    a.btn.btn-danger href="/items/?type=lost" data-mdb-ripple-init=""
+      i.fas.fa-search.me-md-2
+      | Look for Lost Items
+    - if current_account.logged_in?
       p.mt-4
         | Did not find someone searching for it?
         br
@@ -23,13 +24,14 @@ p
       a.btn.btn-info href="/items/new?type=found" data-mdb-ripple-init=""
         i.fas.fa-plus.me-md-2
         | Post a Found Item
-    .col-md-6.my-4
-      h4
-        | Lost an item?
-      p See if someone has found it!
-      a.btn.btn-success href="/items/?type=found" data-mdb-ripple-init=""
-        i.fas.fa-search.me-md-2
-        | Look for Found Items
+  .col-md-6.my-4
+    h4
+      | Lost an item?
+    p See if someone has found it!
+    a.btn.btn-success href="/items/?type=found" data-mdb-ripple-init=""
+      i.fas.fa-search.me-md-2
+      | Look for Found Items
+    - if current_account.logged_in?
       p.mt-4
         | Did not find your item?
         br
