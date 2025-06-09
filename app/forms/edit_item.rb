@@ -5,7 +5,8 @@ require_relative 'form_base'
 module LostNFound
   module Form
     # This form is used to validate items.
-    class NewItem < Dry::Validation::Contract
+    class EditItem < Dry::Validation::Contract
+      # Same as new item
       config.messages.load_paths << File.join(__dir__, 'errors/new_item.yml')
 
       params do
@@ -17,10 +18,9 @@ module LostNFound
         optional(:location).maybe(:string)
         optional(:time).maybe(:integer)
         optional(:challenge_question).maybe(:string)
-        optional(:owner_name).maybe(:string)
-        optional(:owner_student_id).maybe(:string)
         optional(:tags).maybe(:array)
         optional(:images).maybe(:array)
+        optional(:existing_images).maybe(:array)
       end
 
       rule(:type) do

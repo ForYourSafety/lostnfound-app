@@ -1,7 +1,7 @@
 div class="container"
   div class="row"
     div class="row"
-      div class="col-md-6 d-flex align-items-center"
+      div class="col-md-7 d-flex align-items-center"
         h1
           | #{item.name}
           - item_type_class = item.type == "lost" ? "badge-danger" : "badge-success"
@@ -9,19 +9,23 @@ div class="container"
           span class="badge rounded-pill #{item_type_class}" style="font-size: 0.6em;" #{item.type.capitalize}
           - if item.created_by == current_user.id
             span class="badge rounded-pill badge-info ms-1" style="font-size: 0.6em;" Posted by you
-      div class="col-md-6 text-end"
+          - if item.resolved == 1
+            span class="badge rounded-pill badge-warning ms-1" style="font-size: 0.6em;" Resolved
+      div class="col-md-5 text-end"
         - if item.policies.can_delete
-          button.btn.btn-danger.ms-2.mt-2 data-mdb-ripple-init=""
-            i.fas.fa-trash-alt.me-md-2
-            |  Delete
+          form action="/items/#{item.id}/delete" method="post" class="d-inline" id="delete-form"
+            button.btn.btn-danger data-mdb-ripple-init="" data-item-id="#{item.id}"
+              i.fas.fa-trash-alt.me-md-2
+              |  Delete
         - if item.policies.can_edit
-          button.btn.btn-warning.ms-2.mt-2 data-mdb-ripple-init=""
+          a.btn.btn-warning.ms-2.mt-2 data-mdb-ripple-init="" id="edit-item" href="/items/#{item.id}/edit"
             i.fas.fa-edit.me-md-2
             |  Edit
         - if item.policies.can_resolve
-          button.btn.btn-success.ms-2.mt-2 data-mdb-ripple-init=""
-            i.fas.fa-check.me-md-2
-            |  Resolve
+          form action="/items/#{item.id}/resolve" method="post" class="d-inline" id="resolve-form"
+            button.btn.btn-success.ms-2.mt-2 data-mdb-ripple-init="" id="resolve-item" data-item-id="#{item.id}"
+              i.fas.fa-check.me-md-2
+              |  Resolve
   hr
   div class="row"
     div class="col-md-4"
@@ -37,8 +41,12 @@ div class="container"
           h5 Description
           p #{item.description}
 
-          h5 Location
-          p #{item.location}
+          - if item.location
+            h5 Location
+            p #{item.location}
+          - if item.time
+            h5 Time
+            p #{item.time_formatted}
         div class="col-md-6"
           h5 Tags
           div
@@ -61,10 +69,14 @@ div class="container"
             div class="col-md-12"
               h5
                 | This item is posted by you!
+              - if item.challenge_question
+                p
+                  | Your challenge question: 
+                  strong #{item.challenge_question}
               p
                 | Check if someone has requested your contact information.
               div class="text-end my-3"
-                button.btn.btn-secondary data-mdb-ripple-init=""
+                a.btn.btn-secondary data-mdb-ripple-init="" href="/items/#{item.id}/requests"
                   i.fas.fa-list.me-md-2
                   | Requests to me
           - else
@@ -82,16 +94,17 @@ div class="container"
                     | The requester has a challenge question. You should include your answer to this question in your message:
                     br
                     strong #{item.challenge_question}
-                div class="form-outline" data-mdb-input-init=""
-                  textarea.form-control id="request_message" rows="4"
-                  label.form-label for="request_message" Message
-                div class="text-end my-3"
-                  button.btn.btn-secondary data-mdb-ripple-init=""
-                    i.fas.fa-list.me-md-2
-                    | My Requests
-                  button.btn.btn-info.ms-2 data-mdb-ripple-init=""
-                    i.fas.fa-envelope.me-md-2
-                    | Request Contact
+                form action="/items/#{item.id}/requests" method="post" id="request-form"
+                  div class="form-outline" data-mdb-input-init=""
+                    textarea.form-control id="request-message" name="message" required="" rows="4"
+                    label.form-label for="request-message" Message
+                  div class="text-end my-3"
+                    a.btn.btn-secondary data-mdb-ripple-init="" type="button" href="/items/#{item.id}/requests"
+                      i.fas.fa-list.me-md-2
+                      | My Requests
+                    button.btn.btn-info.ms-2 data-mdb-ripple-init="" type="submit"
+                      i.fas.fa-envelope.me-md-2
+                      | Request Contact
               - else
                 - if current_user.logged_out?
                   p
@@ -99,10 +112,16 @@ div class="container"
                     |  or 
                     a href="/auth/register" Register
                     |  to request the contact information of the person who posted this item!
-                - if item.policies.can_view_contacts
-                  p
-                    | Your request has been approved! Go ahead and contact the person who posted this item with the contact information above!
+                - else
+                  - if item.policies.can_view_contacts
+                    p
+                      | Your request has been approved! Go ahead and contact the person who posted this item with the contact information above!
+                  - if item.resolved == 1
+                    p
+                      | This item has been resolved. You can no longer request contact information of the person who posted this item.
                   div class="text-end my-3"
-                    button.btn.btn-secondary data-mdb-ripple-init=""
+                    a.btn.btn-secondary data-mdb-ripple-init="" href="/items/#{item.id}/requests"
                       i.fas.fa-list.me-md-2
                       | My Requests
+
+== assets([:js, :item])

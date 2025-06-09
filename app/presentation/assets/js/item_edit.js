@@ -4,12 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
     setupFilePond();
     setupDateTimePicker();
     setupTagSelect();
+    setupImageDeleteButton();
     setupSubmitButton();
 });
 
 function setupTypeSelection() {
-    const urlParams = new URLSearchParams(window.location.search);
-    itemType = urlParams.get('type') || 'found';
+    itemType = document.getElementById('current-type').dataset.type;
+
     typeLost = document.getElementById('type-lost');
     typeFound = document.getElementById('type-found');
 
@@ -20,7 +21,6 @@ function setupTypeSelection() {
 
     instructionsElem = document.getElementById('instructions');
 
-    itemType = urlParams.get('type') || 'found';
     updateType();
 
     typeLost.addEventListener('click', function() {
@@ -35,15 +35,11 @@ function setupTypeSelection() {
 }
 
 function updateType() {
-    updateUrl();
-
     typeLost.classList.toggle('badge-danger', itemType === 'lost');
     typeLost.classList.toggle('badge-light', itemType !== 'lost');
     typeFound.classList.toggle('badge-success', itemType === 'found');
     typeFound.classList.toggle('badge-light', itemType !== 'found');
     
-    ownerInfoDiv.classList.toggle('d-none', itemType !== 'found');
-
     locationLabel.innerText = itemType === 'lost' ?
         'Where was it lost?' :
         'Where was it found?';
@@ -51,21 +47,6 @@ function updateType() {
     itemTimeElem.placeholder = itemType === 'lost' ?
         'Approximately when was it lost?' :
         'Approximately when was it found?';
-    
-    instructionsElem.innerHTML = itemType === 'lost' ?
-        "Before posting a lost item, please make sure you have searched for the items <a href='/items?type=found'>here</a> " +
-        "and see if someone has already found it." :
-        "Before posting a found item, please make sure you have searched for the items <a href='/items?type=lost'>here</a> " +
-        "and see if someone is looking for it.";
-}
-
-function updateUrl() {
-    const urlParams = new URLSearchParams();
-
-    urlParams.set('type', itemType);
-
-    const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
-    window.history.pushState({ path: newUrl }, '', newUrl);
 }
 
 function setupTagSelect() {
@@ -150,6 +131,24 @@ function setupContactInput() {
             validateContactInput(event.target);
         });
     });
+
+    const deleteContactButtons = document.getElementsByClassName('delete-contact-button');
+    for (let i = 0; i < deleteContactButtons.length; i++) {
+        deleteContactButtons[i].addEventListener('click', function() {
+            const contactEntry = this.closest('.contact-entry');
+            contactList.removeChild(contactEntry);
+        });
+    }
+}
+
+function setupImageDeleteButton() {
+    const deleteImageButtons = document.getElementsByClassName('delete-image-button');
+    for (let i = 0; i < deleteImageButtons.length; i++) {
+        deleteImageButtons[i].addEventListener('click', function() {
+            const imageEntry = this.closest('.existing-image');
+            imageEntry.remove();
+        });
+    }
 }
 
 function setupDateTimePicker() {
@@ -212,9 +211,9 @@ function submitForm() {
     const itemLocation = document.getElementById('item-location').value;
     const itemTime = document.getElementById('item-time').value;
     const challengeQuestion = document.getElementById('challenge-question').value;
-    const ownerName = document.getElementById('owner-name').value;
-    const ownerStudentId = document.getElementById('owner-student-id').value;
     const itemTags = tagSelect.selectedValues;
+
+    const existingImages = Array.from(document.querySelectorAll('.existing-image')).map(elem => elem.dataset.key);
     const images = imageFileUpload.getFiles().map(file => file.file);
 
     const contacts = Array.from(document.querySelectorAll('.contact-entry')).map(entry => {
@@ -242,16 +241,15 @@ function submitForm() {
     if (challengeQuestion.trim() !== '')
         formData.append('challenge_question', challengeQuestion);
 
-    if (ownerName.trim() !== '')
-        formData.append('owner_name', ownerName);
-    if (ownerStudentId.trim() !== '')
-        formData.append('owner_student_id', ownerStudentId);
-
     if (itemType)
         formData.append('type', itemType);
 
     itemTags.forEach((tag, index) => {
         formData.append('tags[]', tag);
+    });
+
+    existingImages.forEach((image, index) => {
+        formData.append('existing_images[]', image);
     });
 
     images.forEach((image, index) => {
@@ -268,8 +266,8 @@ function submitForm() {
 
     loadingModal.show();
 
-    // Send the form data
-    fetch('/items/new', {
+    // Send the form data to the same URL as the current page
+    fetch(window.location.href, {
         method: 'POST',
         body: formData
     })
@@ -278,8 +276,8 @@ function submitForm() {
             res = await response.json();
             console.log(res);
 
-            new_item_id = res.data.attributes.id;
-            window.location.href = `/items/${new_item_id}`;
+            item_id = res.data.attributes.id;
+            window.location.href = `/items/${item_id}`;
         } else {
             res = await response.json();
             console.error('Error:', res);

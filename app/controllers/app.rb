@@ -13,12 +13,16 @@ module LostNFound
                       multiselect: 'MultiSelect.css'
                     },
                     js: {
-                      item_all: 'item_all.js',
+                      item: 'item.js',
+                      item_list: 'item_list.js',
                       item_new: 'item_new.js',
+                      item_edit: 'item_edit.js',
+                      request_list: 'request_list.js',
                       multiselect: 'MultiSelect.js'
                     }
     plugin :public, root: 'app/presentation/public'
     plugin :multi_route
+    plugin :all_verbs
     plugin :flash
 
     route do |routing|

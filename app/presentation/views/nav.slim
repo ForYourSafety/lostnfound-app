@@ -9,7 +9,14 @@ nav role="navigation" class="navbar navbar-expand-sm navbar-dark bg-primary"
     div class="collapse navbar-collapse" id="mainNavbar"
       ul class="navbar-nav me-auto mb-sm-0"
         li class="nav-item"
-              a class="nav-link" href="/items/" Items
+              a class="nav-link" href="/items" Items
+        - if @current_account.logged_in?
+          li class="nav-item"
+            a class="nav-link" href="/account/#{@current_account.username}/items" My Items
+          li class="nav-item"
+            a class="nav-link" href="/requests" Requests to me
+          li class="nav-item"
+            a class="nav-link" href="/account/#{@current_account.username}/requests" Requests from me
       ul class="navbar-nav mb-sm-0"
         - if @current_account.logged_in?
           li class="nav-item dropdown"

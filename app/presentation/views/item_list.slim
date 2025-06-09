@@ -1,12 +1,17 @@
 .row
-  .col-md-4
+  .col-md-6
     .d-flex.align-items-center
-      h1 Items
+      - if mine
+        h2 My Items
+      - else
+        h1 Items
       h2.ms-3.d-flex
         span.badge.rounded-pill.badge-light role="button" id="type-lost" data-mdb-ripple-init="" Lost
         span.badge.rounded-pill.badge-light.ms-1 role="button" id="type-found" data-mdb-ripple-init="" Found
-  .col-md-8
-    .d-flex.justify-content-end.align-items-center
+        - if mine
+          span.badge.rounded-pill.badge-light.ms-2 role="button" id="show-resolved" data-mdb-ripple-init="" Resolved
+  .col-md-6
+    .d-flex.justify-content-end.align-items-center.flex-wrap
       .w-25
         select multiple="multiple" name="tag-filter" id="tag-filter" data-placeholder="Filter by tags"
           - colors = ["badge-primary", "badge-secondary", "badge-success", "badge-danger", "badge-warning", "badge-info", "badge-light", "badge-dark"]
@@ -25,33 +30,37 @@
 
 div class="row mt-3"
   - items.all.each_with_index do |item, item_idx|
-    div class="col-12 col-md-4 mb-2 item-card" style="display: none;" data-tags="#{item.tags.map(&:id).join(',')}" data-id="#{item.id}" data-type="#{item.type}"
+    div class="col-12 col-md-4 mb-2 item-card" style="display: none;" data-tags="#{item.tags.map(&:id).join(',')}" data-id="#{item.id}" data-type="#{item.type}" data-resolved="#{item.resolved}" id="item-#{item.id}"
       a href="/items/#{item.id}"
         div class="card ripple bg-light" data-mdb-ripple-color="light"
           div class="bg-image hover-overlay"
             - if item.image_urls.any?
               div id="carousel_#{item_idx}" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init=""
-                div class="carousel-indicators"
-                  - item.image_urls.count.times do |image_idx|
-                    - active_class = image_idx == 0 ? "active" : ""
-                    button type="button" data-mdb-target="carousel_#{item_idx}" data-mdb-slide-to="#{image_idx}" class="#{active_class}" aria-current="true" aria-label="Slide #{image_idx + 1}"
+                - if item.image_urls.count > 1
+                  div class="carousel-indicators"
+                    - item.image_urls.count.times do |image_idx|
+                      - active_class = image_idx == 0 ? "active" : ""
+                      button type="button" data-mdb-target="carousel_#{item_idx}" data-mdb-slide-to="#{image_idx}" class="#{active_class}" aria-current="true" aria-label="Slide #{image_idx + 1}"
                 div class="carousel-inner shadow-4-strong"
                   - item.image_urls.each_with_index do |image_url, image_idx|
                     - active_class = image_idx == 0 ? "active" : ""
                     div class="carousel-item #{active_class}"
                       img src="#{image_url}" class="d-block w-100" alt="Item Image #{image_idx + 1}"
-                button class="carousel-control-prev" type="button" data-mdb-target="#carousel_#{item_idx}" data-mdb-slide="prev"
-                  span class="carousel-control-prev-icon" aria-hidden="true"
-                button class="carousel-control-next" type="button" data-mdb-target="#carousel_#{item_idx}" data-mdb-slide="next"
-                  span class="carousel-control-next-icon" aria-hidden="true"
+                - if item.image_urls.count > 1
+                  button class="carousel-control-prev" type="button" data-mdb-target="#carousel_#{item_idx}" data-mdb-slide="prev"
+                    span class="carousel-control-prev-icon" aria-hidden="true"
+                  button class="carousel-control-next" type="button" data-mdb-target="#carousel_#{item_idx}" data-mdb-slide="next"
+                    span class="carousel-control-next-icon" aria-hidden="true"
             - else
               h6.text-center.pt-3 No image available
           div class="card-header"
             - item_type_class = item.type == "lost" ? "badge-danger" : "badge-success"
             h5
               span class="badge rounded-pill #{item_type_class}" #{item.type.capitalize}
-              - if item.created_by == current_user.id
+              - if !mine && item.created_by == current_user.id
                 span class="badge rounded-pill badge-info ms-1" Posted by you
+              - if item.resolved == 1
+                span class="badge rounded-pill badge-warning ms-1" Resolved
             h4 class="card-title"
               | #{item.name}
               - if item.tags
@@ -63,9 +72,15 @@ div class="row mt-3"
           div class="card-body"
             h6 class="card-subtitle mb-2 text-muted" Description
             p class="card-text" #{item.description}
-            - if item.location
+            - if item.location || item.time
               - location_text = item.type == "lost" ? "Lost at" : "Found at"
-              h6 class="card-subtitle mb-2 text-muted" #{location_text}
-              p class="card-text" #{item.location}
+              h6 class="card-subtitle mb-2 text-muted"
+                | #{location_text}
+              p class="card-text"
+                - if item.location
+                  | #{item.location}
+                  br
+                - if item.time
+                  | #{item.time_formatted}
 
-== assets([:js, :item_all])
+== assets([:js, :item_list])

@@ -1,8 +1,16 @@
 window.onload = () => {
-    // Get filters from url
+    setupTagFilters();
+    setupSearchFilters();
+    setupTypeFilters();
+    setupResolvedFilters();
+    setupNewButton();
+
+    updateFilters();
+}
+
+function setupTagFilters() {
     const urlParams = new URLSearchParams(window.location.search);
     tagFilters = urlParams.getAll('tag');
-    search = urlParams.get('search') || '';
 
     // Select the options in the multi-select based on the URL parameters
     tagSelectElem = document.getElementById('tag-filter');
@@ -20,7 +28,11 @@ window.onload = () => {
             updateFilters();
         }
     });
+}
 
+function setupSearchFilters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    search = urlParams.get('search') || '';
 
     // Initialize the search input
     searchInput = document.getElementById('search_input');
@@ -32,35 +44,27 @@ window.onload = () => {
     searchInput.addEventListener('input', function() {
         updateFilters();
     });
+}
 
-    // Radio buttons: type-lost and type-found
+function setupTypeFilters() {
+    const urlParams = new URLSearchParams(window.location.search);
     typeLost = document.getElementById('type-lost');
     typeFound = document.getElementById('type-found');
 
-    typeFilter = urlParams.get('type') || 'found';
+    typeFilter = urlParams.get('type') || '';
     updateTypeStyle();
 
     typeLost.addEventListener('click', function() {
-        typeFilter = 'lost';
+        typeFilter = typeFilter === 'lost' ? '' : 'lost';
         updateTypeStyle();
         updateFilters();
     });
 
     typeFound.addEventListener('click', function() {
-        typeFilter = 'found';
+        typeFilter = typeFilter === 'found' ? '' : 'found';
         updateTypeStyle();
         updateFilters();
     });
-
-    updateFilters();
-
-    // Add event listener for new item button
-    const newItemButton = document.getElementById('new-item-button');
-    if (newItemButton) {
-        newItemButton.addEventListener('click', function() {
-            window.location.href = '/items/new?type=' + typeFilter;
-        });
-    }
 }
 
 function updateTypeStyle() {
@@ -68,6 +72,21 @@ function updateTypeStyle() {
     typeLost.classList.toggle('badge-light', typeFilter !== 'lost');
     typeFound.classList.toggle('badge-success', typeFilter === 'found');
     typeFound.classList.toggle('badge-light', typeFilter !== 'found');
+}
+
+function setupResolvedFilters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    showResolved = urlParams.get('show-resolved')? true : false;
+    
+    showResolvedElem = document.getElementById('show-resolved');
+    if (showResolvedElem) {
+        showResolvedElem.addEventListener('click', function() {
+            showResolved = !showResolved;
+            showResolvedElem.classList.toggle('badge-warning', showResolved);
+            showResolvedElem.classList.toggle('badge-light', !showResolved);
+            updateFilters();
+        });
+    }
 }
 
 function searchVisible(item) {
@@ -84,7 +103,18 @@ function tagVisible(item) {
 
 function typeVisible(item) {
     const itemType = item.dataset.type;
+    if (!typeFilter)
+        return true; // If no type filter is set, show all items
     return itemType === typeFilter;
+}
+
+function resolvedVisible(item) {
+    const resolved = item.dataset.resolved;
+    if (showResolved) {
+        return true; // If show resolved is enabled, show all items
+    }
+
+    return resolved === '0'; // If show resolved is disabled, only show unresolved items
 }
 
 function updateFilters() {
@@ -95,8 +125,9 @@ function updateFilters() {
         const isSearchVisible = searchVisible(item);
         const isTagVisible = tagVisible(item);
         const isTypeVisible = typeVisible(item);
+        const isResolvedVisible = resolvedVisible(item);
 
-        if (isSearchVisible && isTagVisible && isTypeVisible) {
+        if (isSearchVisible && isTagVisible && isTypeVisible && isResolvedVisible) {
             item.style.display = 'block';
         } else {
             item.style.display = 'none';
@@ -112,7 +143,16 @@ function updateUrl() {
     const urlParams = new URLSearchParams();
 
     // Add the type filter to the URL parameters
-    urlParams.set('type', typeFilter);
+    if (typeFilter) {
+        urlParams.set('type', typeFilter);
+    }
+
+    // Add the show resolved filter to the URL parameters
+    if (showResolved) {
+        urlParams.set('show-resolved', true);
+    } else {
+        urlParams.delete('show-resolved');
+    }
 
     // Update the search parameter
     if (searchValue) {
@@ -126,4 +166,14 @@ function updateUrl() {
 
     const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
     window.history.pushState({ path: newUrl }, '', newUrl);
+}
+
+function setupNewButton() {
+    const newItemButton = document.getElementById('new-item-button');
+    if (newItemButton) {
+        newItemButton.addEventListener('click', function() {
+            newType = typeFilter || 'found'; // Default to 'found' if no type is selected
+            window.location.href = '/items/new?type=' + newType;
+        });
+    }
 }

@@ -1,0 +1,123 @@
+div class="alert alert-danger md-3 d-none" id="error-bar"
+div class="container"
+  form.needs-validation id="item-form"
+    div class="row"
+      div class="row"
+        div class="col-md-6 d-flex align-items-center"
+          div.form-outline data-mdb-input-init=""
+            input.form-control.form-control-lg type="text" id="item-name" required="" value="#{item.name}"
+            label.form-label for="item-name" Item Name
+            .invalid-feedback Please enter an item name.
+          h2.ms-3.d-flex id="current-type" data-type="#{item.type}"
+            span.badge.rounded-pill.badge-light role="button" id="type-lost" data-mdb-ripple-init="" Lost
+            span.badge.rounded-pill.badge-light.ms-1 role="button" id="type-found" data-mdb-ripple-init="" Found
+        div class="col-md-6 text-end"
+          button.btn.btn-success.ms-2.mt-2 data-mdb-ripple-init="" id="submit-button"
+            i.fas.fa-paper-plane.me-md-2
+            |  Update
+    hr
+    div class="row"
+      div class="col-md-4"
+        h5
+          | Images
+        - if item.image_urls.any?
+          - item.image_urls.zip(item.image_keys).each_with_index do |(image_url, image_key), index|
+            .existing-image.position-relative data-key="#{image_key}"
+              img src="#{image_url}" class="img-fluid rounded mb-3" alt="Item Image #{index + 1}" style="width: 100%;"
+              button.btn.btn-danger.btn-floating.position-absolute.top-0.end-0.m-1.delete-image-button type="button" data-mdb-ripple-init="" data-image-key="#{image_key}" data-item-id="#{item.id}"
+                i.fas.fa-times
+        input type="file" id="image-upload" class="filepond" name="filepond" multiple="" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="10"
+      div class="col-md-8"
+        div class="row"
+          div class="col-md-6"
+            h5 Description
+            div.form-outline data-mdb-input-init=""
+              textarea.form-control rows="6" id="item-description"
+                | #{item.description}
+              label.form-label for="item-description"
+                | Description (e.g. color, brand, etc.)
+
+            h5.mt-3 Location
+            div.form-outline data-mdb-input-init=""
+              input.form-control type="text" id="item-location" value="#{item.location}"
+              label.form-label for="item-location" id="location-label"
+            
+            h5.mt-3 if="time-title" Time
+            input.form-control id="item-time" value="#{item.time_formatted}"
+          div class="col-md-6"
+            h5 Tags
+            div
+              select multiple="multiple" name="tag-select" id="tag-select" data-placeholder="Add tags..."
+                - colors = ["badge-primary", "badge-secondary", "badge-success", "badge-danger", "badge-warning", "badge-info", "badge-light", "badge-dark"]
+                - all_tags.all.each do |tag|
+                  - hash = tag.description.hash % colors.length
+                  - selected = item.tags && item.tags.any? { |t| t.id == tag.id }
+                  option value="#{tag.id}" selected=(selected)
+                    span class="badge rounded-pill #{colors[hash]} ms-1"= tag.name
+            div.my-3
+              h5 Contact Information
+              p 
+                | These information are not visible to other users until you approve their request.
+              . id="contact-list"
+                - item.contacts[0...-1].each do |contact|
+                  .d-flex.align-items-center.mb-2.contact-entry
+                    select.form-select.me-2.flex-shrink-0.contact-type style="width: 30%;" data-mdb-select-init=""
+                      option value="email" selected=(contact.contact_type == "email") E-mail
+                      option value="phone" selected=(contact.contact_type == "phone") Phone
+                      option value="address" selected=(contact.contact_type == "address") Address
+                      option value="facebook" selected=(contact.contact_type == "facebook") Facebook
+                      option value="twitter" selected=(contact.contact_type == "twitter") Twitter
+                      option value="instagram" selected=(contact.contact_type == "instagram") Instagram
+                      option value="whatsapp" selected=(contact.contact_type == "whatsapp") WhatsApp
+                      option value="telegram" selected=(contact.contact_type == "telegram") Telegram
+                      option value="line" selected=(contact.contact_type == "line") Line
+                      option value="signal" selected=(contact.contact_type == "signal") Signal
+                      option value="wechat" selected=(contact.contact_type == "wechat") WeChat
+                      option value="discord" selected=(contact.contact_type == "discord") Discord
+                      option value="other" selected=(contact.contact_type == "other") Other
+                    .input-group.form-outline.me-2 data-mdb-input-init=""
+                      input.form-control.contact-value type="text" required="" value="#{contact.value}"
+                      label.form-label for="add-contact-value" Value
+                      .invalid-feedback Please enter a value.
+                    button.btn.btn-danger.btn-floating.delete-contact-button type="button" data-mdb-ripple-init=""
+                      i.fas.fa-minus
+              .d-flex.align-items-center.mb-2.contact-entry id="add-contact-entry"
+                - contact = item.contacts[-1]
+                select.form-select.me-2.flex-shrink-0.contact-type style="width: 30%;" data-mdb-select-init="" id="add-contact-type"
+                  option value="email" selected=(contact.contact_type == "email") E-mail
+                  option value="phone" selected=(contact.contact_type == "phone") Phone
+                  option value="address" selected=(contact.contact_type == "address") Address
+                  option value="facebook" selected=(contact.contact_type == "facebook") Facebook
+                  option value="twitter" selected=(contact.contact_type == "twitter") Twitter
+                  option value="instagram" selected=(contact.contact_type == "instagram") Instagram
+                  option value="whatsapp" selected=(contact.contact_type == "whatsapp") WhatsApp
+                  option value="telegram" selected=(contact.contact_type == "telegram") Telegram
+                  option value="line" selected=(contact.contact_type == "line") Line
+                  option value="signal" selected=(contact.contact_type == "signal") Signal
+                  option value="wechat" selected=(contact.contact_type == "wechat") WeChat
+                  option value="discord" selected=(contact.contact_type == "discord") Discord
+                  option value="other" selected=(contact.contact_type == "other") Other
+                .input-group.form-outline.me-2 data-mdb-input-init=""
+                  input.form-control.contact-value id="add-contact-value" type="text" required="" value="#{contact.value}"
+                  label.form-label for="add-contact-value" Value
+                  .invalid-feedback Please enter a value.
+                button.btn.btn-success.btn-floating type="button" id="add-contact-button" data-mdb-ripple-init=""
+                  i.fas.fa-plus
+            h5.mt-4 Challenge Question
+            p
+              | If provided, other users can include their answer to your question when requesting your contact information.
+            div.form-outline data-mdb-input-init=""
+              textarea.form-control rows="3" id="challenge-question"
+                | #{item.challenge_question}
+              label.form-label for="challenge-question"
+                | Question (e.g. what's on the lock screen?)
+
+div class="modal fade" id="loading-modal" tabindex="-1" aria-hidden="true" data-mdb-backdrop="static" data-mdb-keyboard="false"
+  div class="modal-dialog modal-dialog-centered"
+    div class="modal-content d-flex flex-column align-items-center justify-content-center"
+      div class="modal-header"
+        h4 Updating your item...
+      div class="modal-body"
+        div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"
+
+== assets([:js, :item_edit])
