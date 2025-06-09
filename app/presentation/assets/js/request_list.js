@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     setupStatusFilter();
     setupSearchFilter();
+    setupResolvedFilters();
 
     updateFilters();
 });
@@ -44,6 +45,21 @@ function updateStatusStyle() {
     statusDeclined.classList.toggle('badge-light', statusFilter !== 'declined');
 }
 
+function setupResolvedFilters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    showResolved = urlParams.get('hide-resolved')? false : true;
+    
+    hideResolvedElem = document.getElementById('hide-resolved');
+    if (hideResolvedElem) {
+        hideResolvedElem.addEventListener('click', function() {
+            showResolved = !showResolved;
+            hideResolvedElem.classList.toggle('badge-warning', showResolved);
+            hideResolvedElem.classList.toggle('badge-light', !showResolved);
+            updateFilters();
+        });
+    }
+}
+
 
 function setupSearchFilter() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -65,7 +81,7 @@ function updateFilters() {
 
     const requests = document.querySelectorAll('.request-card');
     requests.forEach(function(request) {
-        const isVisible = searchVisible(request) && statusVisible(request);
+        const isVisible = searchVisible(request) && statusVisible(request) && resolvedVisible(request);
         request.style.display = isVisible ? 'block' : 'none';
     });
 }
@@ -83,6 +99,15 @@ function searchVisible(request) {
     return requestText.includes(searchValue);
 }
 
+function resolvedVisible(item) {
+    const resolved = item.dataset.resolved;
+    if (showResolved) {
+        return true; // If show resolved is enabled, show all items
+    }
+
+    return resolved === '0'; // If show resolved is disabled, only show unresolved items
+}
+
 function updateUrl() {
     const searchValue = searchInput.value.trim();
 
@@ -96,6 +121,13 @@ function updateUrl() {
     // Update the search parameter
     if (searchValue) {
         urlParams.set('search', searchValue);
+    }
+
+    // Add the show resolved filter to the URL parameters
+    if (!showResolved) {
+        urlParams.set('hide-resolved', true);
+    } else {
+        urlParams.delete('hide-resolved');
     }
 
     const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');

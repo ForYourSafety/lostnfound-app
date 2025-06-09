@@ -6,6 +6,8 @@
         span.badge.rounded-pill.badge-light role="button" id="status-unanswered" data-mdb-ripple-init="" Unanswered
         span.badge.rounded-pill.badge-light.ms-1 role="button" id="status-approved" data-mdb-ripple-init="" Approved
         span.badge.rounded-pill.badge-light.ms-1 role="button" id="status-declined" data-mdb-ripple-init="" Declined
+        - if !for_item
+          span.badge.rounded-pill.badge-warning.ms-2 role="button" id="hide-resolved" data-mdb-ripple-init="" Resolved
   .col-md-4
     .d-flex.justify-content-end.align-items-center
       .form-outline.ms-2 data-mdb-input-init=""
@@ -34,7 +36,7 @@
 div class="row mt-3"
   - requests.all.each_with_index do |request, request_idx|
     - if request.policies.can_view
-      div class="col-12 mb-2 request-card" data-id="#{request.id}" id="request-#{request.id}" data-status="#{request.status}"
+      div class="col-12 mb-2 request-card" data-id="#{request.id}" id="request-#{request.id}" data-status="#{request.status}" data-resolved="#{request.item.resolved}"
         div class="card ripple bg-light" data-mdb-ripple-color="light"
           div class="bg-image hover-overlay"
           div class="card-header"
