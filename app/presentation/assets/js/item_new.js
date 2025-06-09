@@ -18,6 +18,8 @@ function setupTypeSelection() {
     locationLabel = document.getElementById('location-label');
     itemTimeElem = document.getElementById('item-time');
 
+    instructionsElem = document.getElementById('instructions');
+
     itemType = urlParams.get('type') || 'found';
     updateType();
 
@@ -49,6 +51,12 @@ function updateType() {
     itemTimeElem.placeholder = itemType === 'lost' ?
         'Approximately when was it lost?' :
         'Approximately when was it found?';
+    
+    instructionsElem.innerHTML = itemType === 'lost' ?
+        "Before posting a lost item, please make sure you have searched for the items <a href='/items?type=found'>here</a> " +
+        "and see if someone has already found it." :
+        "Before posting a found item, please make sure you have searched for the items <a href='/items?type=lost'>here</a> " +
+        "and see if someone is looking for it.";
 }
 
 function updateUrl() {
