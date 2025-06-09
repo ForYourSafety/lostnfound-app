@@ -204,6 +204,8 @@ function submitForm() {
     const itemLocation = document.getElementById('item-location').value;
     const itemTime = document.getElementById('item-time').value;
     const challengeQuestion = document.getElementById('challenge-question').value;
+    const ownerName = document.getElementById('owner-name').value;
+    const ownerStudentId = document.getElementById('owner-student-id').value;
     const itemTags = tagSelect.selectedValues;
     const images = imageFileUpload.getFiles().map(file => file.file);
 
@@ -231,6 +233,11 @@ function submitForm() {
     
     if (challengeQuestion.trim() !== '')
         formData.append('challenge_question', challengeQuestion);
+
+    if (ownerName.trim() !== '')
+        formData.append('owner_name', ownerName);
+    if (ownerStudentId.trim() !== '')
+        formData.append('owner_student_id', ownerStudentId);
 
     if (itemType)
         formData.append('type', itemType);

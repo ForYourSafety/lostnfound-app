@@ -17,6 +17,8 @@ module LostNFound
         optional(:location).maybe(:string)
         optional(:time).maybe(:integer)
         optional(:challenge_question).maybe(:string)
+        optional(:owner_name).maybe(:string)
+        optional(:owner_student_id).maybe(:string)
         optional(:tags).maybe(:array)
         optional(:images).maybe(:array)
       end
