@@ -16,7 +16,7 @@ module LostNFound
             end
 
             all_tags_data = GetAllTags.new(App.config).call(@current_account)
-            all_tags = Tags.new(all_tags_data)
+            all_tags = all_tags_data.nil? ? [] : Tags.new(all_tags_data)
 
             view :item_new,
                  locals: { current_user: @current_account, all_tags: }
@@ -122,7 +122,7 @@ module LostNFound
               item = Item.new(item_data)
 
               all_tags_data = GetAllTags.new(App.config).call(@current_account)
-              all_tags = Tags.new(all_tags_data)
+              all_tags = all_tags_data.nil? ? [] : Tags.new(all_tags_data)
 
               view :item_edit,
                    locals: { current_user: @current_account, item: item, all_tags: all_tags }
@@ -237,10 +237,10 @@ module LostNFound
         # GET /items/
         routing.get do
           item_data = GetAllItems.new(App.config).call(@current_account)
-          items = Items.new(item_data)
+          items = item_data.nil? ? [] : Items.new(item_data)
 
           all_tags_data = GetAllTags.new(App.config).call(@current_account)
-          all_tags = Tags.new(all_tags_data)
+          all_tags = all_tags_data.nil? ? [] : Tags.new(all_tags_data)
 
           view :item_list,
                locals: { current_user: @current_account, items:, all_tags:, mine: false }
