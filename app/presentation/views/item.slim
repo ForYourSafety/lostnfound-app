@@ -69,6 +69,10 @@ div class="container"
             div class="col-md-12"
               h5
                 | This item is posted by you!
+              - if item.challenge_question
+                p
+                  | Your challenge question: 
+                  strong #{item.challenge_question}
               p
                 | Check if someone has requested your contact information.
               div class="text-end my-3"
