@@ -104,6 +104,11 @@ module LostNFound
           routing.on 'edit' do
             # GET /items/:item_id/edit
             routing.get do
+              unless @current_account.logged_in?
+                flash[:error] = 'You must be logged in to edit an item.'
+                routing.redirect '/auth/login'
+              end
+
               item_data = GetItem.new(App.config).call(
                 current_account: @current_account,
                 item_id: item_id
@@ -121,6 +126,35 @@ module LostNFound
 
               view :item_edit,
                    locals: { current_user: @current_account, item: item, all_tags: all_tags }
+            end
+
+            # POST /items/:item_id/edit
+            routing.post do
+              unless @current_account.logged_in?
+                response.status = 401
+                return { message: 'You must be logged in to edit an item.' }.to_json
+              end
+
+              item_form = Form::EditItem.new.call(routing.params)
+              if item_form.failure?
+                response.status = 400
+                return { message: Form.message_values(item_form) }.to_json
+              end
+
+              item_data = UpdateItem.new(App.config).call(
+                current_account: @current_account,
+                item_id: item_id,
+                item_params: item_form.to_h
+              )
+
+              if item_data.nil?
+                response.status = 400
+                return { message: 'Item could not be updated.' }.to_json
+              end
+
+              flash[:success] = 'Item updated successfully.'
+              response.status = 200
+              { message: 'Item updated', data: item_data }.to_json
             end
           end
 

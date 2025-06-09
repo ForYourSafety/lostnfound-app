@@ -276,8 +276,8 @@ function submitForm() {
             res = await response.json();
             console.log(res);
 
-            new_item_id = res.data.attributes.id;
-            window.location.href = `/items/${new_item_id}`;
+            item_id = res.data.attributes.id;
+            window.location.href = `/items/${item_id}`;
         } else {
             res = await response.json();
             console.error('Error:', res);
