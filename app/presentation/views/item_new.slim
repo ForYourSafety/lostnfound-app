@@ -33,11 +33,10 @@ div class="container"
             h5.mt-3 Location
             div.form-outline data-mdb-input-init=""
               input.form-control type="text" id="item-location"
-              label.form-label for="item-location"
-                | Location (i.e. where it was lost/found)
+              label.form-label for="item-location" id="location-label"
             
             h5.mt-3 if="time-title" Time
-            input.form-control id="item-time" placeholder="Time (i.e. approximately when it was lost/found)"
+            input.form-control id="item-time"
           div class="col-md-6"
             h5 Tags
             div
@@ -80,6 +79,18 @@ div class="container"
               textarea.form-control rows="3" id="challenge-question"
               label.form-label for="challenge-question"
                 | Question (e.g. what's on the lock screen?)
+            div.d-none id="owner-info"
+              h5.mt-4 Owner Information
+              p
+                | If there is information about the owner of the item, we will directly notify them if they registered their information with us.
+              div.form-outline data-mdb-input-init=""
+                input.form-control type="text" id="owner-name"
+                label.form-label for="owner-name"
+                  | Owner's Name
+              div.form-outline.my-2 data-mdb-input-init=""
+                input.form-control type="text" id="owner-student-id"
+                label.form-label for="owner-student-id"
+                  | Owner's Student ID Number
 
 div class="modal fade" id="loading-modal" tabindex="-1" aria-hidden="true" data-mdb-backdrop="static" data-mdb-keyboard="false"
   div class="modal-dialog modal-dialog-centered"

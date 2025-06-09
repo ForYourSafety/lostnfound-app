@@ -13,6 +13,11 @@ function setupTypeSelection() {
     typeLost = document.getElementById('type-lost');
     typeFound = document.getElementById('type-found');
 
+    ownerInfoDiv = document.getElementById('owner-info');
+
+    locationLabel = document.getElementById('location-label');
+    itemTimeElem = document.getElementById('item-time');
+
     itemType = urlParams.get('type') || 'found';
     updateType();
 
@@ -34,6 +39,16 @@ function updateType() {
     typeLost.classList.toggle('badge-light', itemType !== 'lost');
     typeFound.classList.toggle('badge-success', itemType === 'found');
     typeFound.classList.toggle('badge-light', itemType !== 'found');
+    
+    ownerInfoDiv.classList.toggle('d-none', itemType !== 'lost');
+
+    locationLabel.innerText = itemType === 'lost' ?
+        'Where it was lost?' :
+        'Where it was found?';
+    
+    itemTimeElem.placeholder = itemType === 'lost' ?
+        'Approximately when was it lost?' :
+        'Approximately when was it found?';
 }
 
 function updateUrl() {
