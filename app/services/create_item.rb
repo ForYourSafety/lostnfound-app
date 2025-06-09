@@ -25,6 +25,8 @@ module LostNFound
         location: item_params[:location],
         time: item_params[:time],
         challenge_question: item_params[:challenge_question],
+        owner_name: item_params[:owner_name],
+        owner_student_id: item_params[:owner_student_id],
         tag_ids: tag_ids,
         contacts: contacts
       }
