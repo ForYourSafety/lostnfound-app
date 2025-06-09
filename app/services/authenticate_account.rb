@@ -16,7 +16,7 @@ module LostNFound
       credentials = { username: username, password: password }
       response = HTTP.post("#{@config.API_URL}/auth/authenticate",
                            json: SignedMessage.sign(credentials))
-      raise(NotAuthenticatedError) if response.code == 401
+      raise(NotAuthenticatedError) if response.code == 403
       raise(ApiServerError) if response.code != 200
 
       account_info = JSON.parse(response.to_s)['data']['attributes']
