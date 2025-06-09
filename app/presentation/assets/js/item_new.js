@@ -40,7 +40,7 @@ function updateType() {
     typeFound.classList.toggle('badge-success', itemType === 'found');
     typeFound.classList.toggle('badge-light', itemType !== 'found');
     
-    ownerInfoDiv.classList.toggle('d-none', itemType !== 'lost');
+    ownerInfoDiv.classList.toggle('d-none', itemType !== 'found');
 
     locationLabel.innerText = itemType === 'lost' ?
         'Where it was lost?' :
