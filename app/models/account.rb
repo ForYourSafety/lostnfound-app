@@ -22,6 +22,14 @@ module LostNFound
       @account_info ? @account_info['attributes']['id'] : nil
     end
 
+    def student_id
+      @account_info ? @account_info['attributes']['student_id'] : nil
+    end
+
+    def name_on_id
+      @account_info ? @account_info['attributes']['name_on_id'] : nil
+    end
+
     def logged_out?
       @account_info.nil?
     end

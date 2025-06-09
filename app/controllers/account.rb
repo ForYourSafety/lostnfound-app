@@ -48,6 +48,40 @@ module LostNFound
             "#{App.config.APP_URL}/auth/register/#{registration_token}"
           )
         end
+
+        # POST /account/[username]/student_info
+        routing.post String, 'student_info' do |username|
+          unless @current_account.username == username
+            flash[:error] = 'You are not authorized to update this account.'
+            App.logger.warn "Unauthorized attempt to update account info by #{@current_account.username} on #{username}"
+            routing.redirect "/account/#{@current_account.username}"
+          end
+
+          student_info_form = Form::StudentInfo.new.call(routing.params)
+
+          if student_info_form.failure?
+            flash[:error] = Form.message_values(student_info_form)
+            App.logger.info 'Student info validation failed'
+            routing.redirect "/account/#{@current_account.username}"
+          end
+
+          student_info = AddStudentInfo.new(App.config).call(
+            current_account: @current_account,
+            student_info_params: student_info_form.to_h
+          )
+          if student_info
+            flash[:notice] = 'Student information saved successfully.'
+          else
+            flash[:error] = 'Failed to save student information.'
+            App.logger.warn "API call to update student info failed for #{@current_account.username}"
+          end
+
+          routing.redirect "/account/#{@current_account.username}"
+        rescue StandardError => e
+          App.logger.warn 'Error while saving student info'
+          flash[:error] = 'An unexpected error occurred while saving your student information. Please try again.'
+          routing.redirect "/account/#{@current_account.username}"
+        end
       end
     end
   end
