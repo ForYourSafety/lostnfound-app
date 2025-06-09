@@ -18,14 +18,14 @@
 .row.my-3
 - if for_item
     h4 Contact requests for item: #{for_item.name}
-    a.btn.btn-info.ms-2.mt-1 href="/items/#{for_item.id}" data-mdb-ripple-init=""
-      i.fas.fa-external-link.me-md-2
-      |  Go to Item
     - if for_item.challenge_question
       h4
         | Challenge Question: 
         strong 
           | #{for_item.challenge_question}
+    a.btn.btn-info.ms-2.my-1 href="/items/#{for_item.id}" data-mdb-ripple-init=""
+        i.fas.fa-external-link.me-md-2
+        |  Go to Item
 - else
   - if to_me
     h4 Contact requests to me
