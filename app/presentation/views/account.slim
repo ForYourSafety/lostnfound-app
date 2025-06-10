@@ -4,12 +4,12 @@ div.container
   .row
     .col-md-6
       h5 Username
-      strong #{@current_account.username}
+      strong #{account.username}
       
       h5.mt-4 Email
-      strong #{@current_account.email}
+      strong #{account.email}
 
-    form.col-md-6 action="/account/#{@current_account.username}" method="post"
+    form.col-md-6 action="/account/#{account.username}" method="post"
       h5 Change Password
 
       div.form-outline.mt-3 data-mdb-input-init=""
@@ -25,18 +25,18 @@ div.container
         | By filling in your student ID information, you will be directly notified if someone found your items that have your information on it, such as wallets, ID cards, etc.
       
       div.form-outline.mt-3 data-mdb-input-init=""
-        input.form-control type="text" name="student_id" id="student_id" value=@current_account.student_id
+        input.form-control type="text" name="student_id" id="student_id" value=account.student_id
         label.form-label for="student_id" Student ID
 
       div.form-outline.mt-2 data-mdb-input-init=""
-        input.form-control type="text" name="name_on_id" id="name_on_id" value=@current_account.name_on_id
+        input.form-control type="text" name="name_on_id" id="name_on_id" value=account.name_on_id
         label.form-label for="name_on_id" Name on ID
 
       button.btn.btn-primary.mt-3.float-end type="submit" Save Changes
       
   / API Key Section
   hr.my-4
-  h3 API Access
+  h3 API Access #{account.inspect}
 
   p.my-3
     | Read-only key valid for one month

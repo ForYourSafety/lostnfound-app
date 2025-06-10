@@ -1,0 +1,15 @@
+en:
+  dry_validation:
+    errors:
+      rules:
+        password:
+          filled?: "You must enter a password"
+        password_confirm:
+          filled?: "You must enter a confirmation password"
+        student_id:
+          filled?: "You must enter a student ID"
+          min_size?: "Your student ID must be at least %{size} characters long"
+        name_on_id:
+          filled?: "You must enter a name on your ID"
+      password_entropy: "Your password needs to be longer or use unique characters"
+      passwords_match: "Your passwords do not match"
