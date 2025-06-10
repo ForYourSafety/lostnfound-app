@@ -13,6 +13,18 @@ div.container
     div.col-sm-10
       div = @current_account.email
 
+  div.row
+    div.col-sm-2
+      | Student ID:
+    div.col-sm-10
+      div = @current_account.student_id
+
+  div.row
+    div.col-sm-2
+      | Name on ID:
+    div.col-sm-10
+      div = @current_account.name_on_id
+
   div.row.mt-4
     div.col-sm-12
       p.text-muted
