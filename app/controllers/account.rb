@@ -92,45 +92,6 @@ module LostNFound
             end
           end
 
-          routing.on 'student_info' do
-            # POST /account/[username]/student_info
-            routing.post do
-              unless @current_account.username == username
-                flash[:error] = 'You are not authorized to update this account.'
-                App.logger.warn "Unauthorized attempt to update account infoby #{@current_account.username} on #{username}"
-                routing.redirect "/account/#{@current_account.username}"
-              end
-
-              student_info_form = Form::StudentInfo.new.call(routing.params)
-
-              if student_info_form.failure?
-                flash[:error] = Form.message_values(student_info_form)
-                App.logger.info 'Student info validation failed'
-                routing.redirect "/account/#{@current_account.username}"
-              end
-
-              student_info = AddStudentInfo.new(App.config).call(
-                current_account: @current_account,
-                student_info_params: student_info_form.to_h
-              )
-              if student_info
-                flash[:notice] = 'Student information saved successfully.'
-                latest_account_from_db = GetAccountDetails.new(App.config).call(
-                  @current_account, username
-                )
-                @current_account = latest_account_from_db
-              else
-                flash[:error] = 'Failed to save student information.'
-                App.logger.warn "API call to update student info failed for #{@current_account.username}"
-              end
-              routing.redirect "/account/#{@current_account.username}"
-            rescue StandardError
-              App.logger.warn 'Error while saving student info'
-              flash[:error] = 'An unexpected error occurred while saving your student information. Please try again.'
-              routing.redirect "/account/#{@current_account.username}"
-            end
-          end
-
           # GET /account/<username>
           routing.get do
             account = GetAccountDetails.new(App.config).call(
@@ -140,6 +101,34 @@ module LostNFound
           rescue GetAccountDetails::InvalidAccount => e
             flash[:error] = e.message
             routing.redirect '/auth/login'
+          end
+
+          # POST /account/<username>
+          routing.post do
+            unless @current_account.username == username
+              flash[:error] = 'You are not authorized to update this account.'
+              routing.redirect "/account/#{@current_account.username}"
+            end
+
+            account_params = Form::UpdateAccount.new.call(routing.params)
+
+            if account_params.failure?
+              flash[:error] = Form.message_values(account_params)
+              routing.redirect "/account/#{@current_account.username}"
+            end
+
+            new_account = UpdateAccount.new(App.config).call(
+              current_account: @current_account,
+              account_params: account_params.to_h
+            )
+
+            if new_account
+              flash[:notice] = 'Account information updated successfully.'
+            else
+              flash[:error] = 'Failed to update account information.'
+            end
+
+            routing.redirect "/account/#{@current_account.username}"
           end
         end
       end
