@@ -13,6 +13,8 @@ module LostNFound
           account = GetAccountDetails.new(App.config).call(
             @current_account, username
           )
+          @current_account = account
+          # binding.irb
           view :account, locals: { account: account }
         rescue GetAccountDetails::InvalidAccount => e
           flash[:error] = e.message
@@ -71,13 +73,17 @@ module LostNFound
           )
           if student_info
             flash[:notice] = 'Student information saved successfully.'
+            latest_account_from_db = GetAccountDetails.new(App.config).call(
+              @current_account, username
+            )
+            @current_account = latest_account_from_db
           else
             flash[:error] = 'Failed to save student information.'
             App.logger.warn "API call to update student info failed for #{@current_account.username}"
           end
-
           routing.redirect "/account/#{@current_account.username}"
-        rescue StandardError => e
+
+        rescue StandardError
           App.logger.warn 'Error while saving student info'
           flash[:error] = 'An unexpected error occurred while saving your student information. Please try again.'
           routing.redirect "/account/#{@current_account.username}"
