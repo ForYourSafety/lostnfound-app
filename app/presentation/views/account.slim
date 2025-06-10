@@ -1,46 +1,39 @@
 h1 Account Details
 
 div.container
-  div.row
-    div.col-sm-2
-      | Username:
-    div.col-sm-10
-      div = @current_account.username
+  .row
+    .col-md-6
+      h5 Username
+      strong #{@current_account.username}
+      
+      h5.mt-4 Email
+      strong #{@current_account.email}
 
-  div.row
-    div.col-sm-2
-      | Email:
-    div.col-sm-10
-      div = @current_account.email
+    form.col-md-6 action="/account/#{@current_account.username}" method="post"
+      h5 Change Password
 
-  div.row
-    div.col-sm-2
-      | Student ID:
-    div.col-sm-10
-      div = @current_account.student_id
+      div.form-outline.mt-3 data-mdb-input-init=""
+        input.form-control type="password" name="password" id="password"
+        label.form-label for="password" Password
 
-  div.row
-    div.col-sm-2
-      | Name on ID:
-    div.col-sm-10
-      div = @current_account.name_on_id
+      div.form-outline.mt-2 data-mdb-input-init=""
+        input.form-control type="password" name="confirm_password" id="confirm_password"
+        label.form-label for="confirm_password" Confirm Password
+      
+      h5.mt-4 Update Student ID Information
+      p.text-muted.mt-1
+        | By filling in your student ID information, you will be directly notified if someone found your items that have your information on it, such as wallets, ID cards, etc.
+      
+      div.form-outline.mt-3 data-mdb-input-init=""
+        input.form-control type="text" name="student_id" id="student_id" value=@current_account.student_id
+        label.form-label for="student_id" Student ID
 
-  div.row.mt-4
-    div.col-sm-12
-      p.text-muted
-        | By filling in your information, you will be directly notified if someone found your items that have your information on it.
+      div.form-outline.mt-2 data-mdb-input-init=""
+        input.form-control type="text" name="name_on_id" id="name_on_id" value=@current_account.name_on_id
+        label.form-label for="name_on_id" Name on ID
 
-  form action="/account/#{@current_account.username}/student_info" method="post"
-    div.form-group
-      label for="student_id" Student ID Number:
-      input.form-control type="text" name="student_id" id="student_id"
-
-    div.form-group.mt-3
-      label for="name_on_id" Name on Student ID:
-      input.form-control type="text" name="name_on_id" id="name_on_id"
-
-    button.btn.btn-primary.mt-3 type="submit" Save
-
+      button.btn.btn-primary.mt-3.float-end type="submit" Save Changes
+      
   / API Key Section
   hr.mt-5
   h3 API Access:
