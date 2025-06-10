@@ -6,7 +6,6 @@ require_relative 'app'
 module LostNFound
   # Web controller for LostNFound API
   class App < Roda # rubocop:disable Metrics/ClassLength
-
     def gh_oauth_url(config)
       url = config.GH_OAUTH_URL
       client_id = config.GH_CLIENT_ID
@@ -47,9 +46,9 @@ module LostNFound
 
           routing.redirect '/'
         rescue AuthenticateAccount::NotAuthenticatedError
-          flash.now[:error] = 'Username and password did not match our records'
+          flash[:error] = 'Username and password did not match our records'
           response.status = 401
-          view :login
+          routing.redirect @login_route
         rescue AuthenticateAccount::ApiServerError => e
           App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
           flash[:error] = 'Our servers are not responding -- please try later'
