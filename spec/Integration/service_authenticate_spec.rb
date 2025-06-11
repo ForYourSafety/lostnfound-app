@@ -5,10 +5,10 @@ require 'webmock/minitest'
 
 describe 'Test Service Objects' do # rubocop:disable Metrics/BlockLength
   before do
-    @credentials = { username: 'sarahpan', password: '12345678a' }
-    @mal_credentials = { username: 'sarahpan', password: 'gfedcba' }
+    @credentials = { username: 'fifiding', password: 'sweetdreamsaremadeofcheese123' }
+    @mal_credentials = { username: 'fifiding', password: 'wrongpassword' }
     @api_account = { attributes:
-                       { username: 'sarahpan', email: 'sarah.pan@iss.nthu.edu.tw' } }
+                       { username: 'fifiding', email: 'fifi.ding@iss.nthu.edu.tw' } }
   end
 
   after do
@@ -18,41 +18,36 @@ describe 'Test Service Objects' do # rubocop:disable Metrics/BlockLength
   describe 'Find authenticated account' do
     it 'HAPPY: should find an authenticated account' do
       auth_account_file = 'spec/fixtures/auth_account.json'
-      # # Use this code to get an actual seeded account from API:
+      ## Use this code to get an actual seeded account from API:
+      # @credentials = { username: 'fifiding', password: 'sweetdreamsaremadeofcheese123' }
+      # signed_payload = SignedMessage.sign(@credentials)
+      # WebMock.disable!
       # response = HTTP.post("#{app.config.API_URL}/auth/authenticate",
-      #   json: { username: @credentials[:username], password: @credentials[:password] })
+      #                      json: signed_payload)
+
       # auth_account_json = response.body.to_s
       # File.write(auth_account_file, auth_account_json)
-      # puts "Seeded response saved to #{auth_account_file}"
-
       auth_return_json = File.read(auth_account_file)
-      WebMock.disable!
-      response = HTTP.post("#{app.config.API_URL}/auth/authenticate",
-                           json: { username: @credentials[:username], password: @credentials[:password] })
 
-      auth_account_json = response.body.to_s
-      File.write(auth_account_file, auth_account_json)
-      puts "Seeded response saved to #{auth_account_file}"
-      WebMock.enable!
-      auth_return_json = File.read(auth_account_file)
       WebMock.stub_request(:post, "#{API_URL}/auth/authenticate")
-             .with(body: @credentials.to_json)
+             .with(body: SignedMessage.sign(@credentials))
              .to_return(body: auth_return_json,
                         headers: { 'content-type' => 'application/json' })
 
-      account = LostNFound::AuthenticateAccount.new(app.config).call(**@credentials)
-      _(account).wont_be_nil
-      _(account[:account]['attributes']['username']).must_equal @api_account[:attributes][:username]
-      _(account[:account]['attributes']['email']).must_equal @api_account[:attributes][:email]
+      auth = LostNFound::AuthenticateAccount.new.call(**@credentials)
+
+      _(auth).wont_be_nil
+      _(auth[:account]['attributes']['username']).must_equal @api_account[:attributes][:username]
+      _(auth[:account]['attributes']['email']).must_equal @api_account[:attributes][:email]
     end
 
     it 'BAD: should not find a false authenticated account' do
       WebMock.stub_request(:post, "#{API_URL}/auth/authenticate")
-             .with(body: @mal_credentials.to_json)
-             .to_return(status: 403)
+             .with(body: SignedMessage.sign(@mal_credentials).to_json)
+             .to_return(status: 401)
       _(proc {
-        LostNFound::AuthenticateAccount.new(app.config).call(**@mal_credentials)
-      }).must_raise LostNFound::AuthenticateAccount::UnauthorizedError
+        LostNFound::AuthenticateAccount.new.call(**@mal_credentials)
+      }).must_raise LostNFound::AuthenticateAccount::NotAuthenticatedError
     end
   end
 end
